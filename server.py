@@ -1,6 +1,5 @@
 import socket
 from threading import Thread
-from sys import quit as stop_server
 from random import randint, sample
 
 HOST = socket.gethostbyname(socket.gethostname()) 
@@ -35,7 +34,7 @@ def run_server():
         process.start()
         
     s.close()
-    stop_server()
+    quit()
 
 def accept_client(conn, addr):
     global clients_connected
