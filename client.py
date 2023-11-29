@@ -1,5 +1,4 @@
 import socket
-import textbox
 
 HOST = ""
 PORT = 0
