@@ -1,18 +1,20 @@
-# echo-client.py
-
 import socket
+import textbox
 
-HOST = ""  # The server's hostname or IP address
-PORT = 0  # The port used by the server
+HOST = ""
+PORT = 0
 
 def decode_client_key(key):
-    global HOST
-    global PORT
-    pair = key.split("*$()W##$")
-    HOST = pair[1]
-    PORT = int(pair[0])
+    sprtr = key[0]
+    tokens = key[1:len(key)-1].split(sprtr)
+    port = int(tokens[0] + tokens[len(tokens)-1])
+    tokens = tokens[1:len(tokens)-1]
+    decoder = tokens[(len(tokens)-1)//2+1:]
+    host_tokens = tokens[:(len(tokens)-1)//2+1]
+    host = ".".join(host_tokens[int(index)] for index in decoder)
+    return host, port
 
-decode_client_key(input("Enter in room ID: "))
+HOST, PORT = decode_client_key(input("Enter in room ID: "))
 
 with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     s.connect((HOST, PORT))
@@ -22,4 +24,4 @@ with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
     if data == b"1":
         raise ConnectionRefusedError
 
-print(f"Successfully Connected! Data outputted: {data}")
+print(f"Successfully Connected! Data outputted: {data.decode()}")

@@ -1,18 +1,22 @@
-# echo-server.py
-
 import socket
-import threading
-import sys
+from threading import Thread
+from sys import quit as stop_server
+from random import randint, sample
 
-HOST = socket.gethostbyname(socket.gethostname())  # Standard loopback interface address (localhost)
-PORT = 5000  # Port to listen on (non-privileged ports are > 1023)
+HOST = socket.gethostbyname(socket.gethostname()) 
+PORT = randint(0, 65535)
 password = b"test"
 
 def create_client_key():
-    global PORT, HOST
-    return str(PORT) + "*$()W##$" + str(HOST)
+    sprtr = chr(randint(35, 38))
+    temp = HOST.split(".")
+    sep_host = sample(temp, k=len(temp))
+    mess_ip = sprtr.join(part for part in sep_host)
+    decoder = sprtr.join(str(sep_host.index(part)) for part in temp)
+    del temp, sep_host
+    return f"{sprtr}{str(PORT)[:len(str(PORT))//2]}{sprtr}{mess_ip}{sprtr}{decoder}{sprtr}{str(PORT)[len(str(PORT))//2:]}{sprtr}"
 
-print(f"Port created: {PORT} from Host: {HOST}")
+print(f"Port created: {PORT} in machine: {HOST}")
 clients_connected = 0
 max_traffic = 5
 
@@ -27,11 +31,11 @@ def run_server():
     while clients_connected < max_traffic:
         s.listen()
         conn, addr = s.accept()
-        process = threading.Thread(target=accept_client, args=(conn, addr))
+        process = Thread(target=accept_client, args=(conn, addr))
         process.start()
         
     s.close()
-    sys.exit()
+    stop_server()
 
 def accept_client(conn, addr):
     global clients_connected
