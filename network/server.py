@@ -2,11 +2,6 @@ import socket
 from threading import Thread
 from random import randint, sample
 
-HOST = socket.gethostbyname(socket.gethostname()) 
-PORT = randint(0, 65535)
-password = b"test"
-
-
 class Server:
     def __init__(self, password: str = None,
                  host: str = socket.gethostbyname(socket.gethostname()),
@@ -113,7 +108,7 @@ class Server:
                 print(f"Current # of clients connected: {self.clients_conn}")
                 print(f"Connected by {addr}")
                 data = conn.recv(1024)
-                if data.decode() == password.decode():
+                if data.decode() == self.PASSWORD.decode():
                     conn.sendall(b"Connection Allowed")
                 else:
                     conn.sendall(b"1")

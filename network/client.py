@@ -1,7 +1,5 @@
 import socket
 from threading import Thread
-import pygame as pg
-
 
 class Client:
     def __init__(self):
