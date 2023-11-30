@@ -3,6 +3,12 @@ from threading import Thread
 
 class Client:
     def __init__(self):
+        """
+        - HOST: server ip
+        - PORT: server port
+        - conn: socket connection
+        - running: is client connected
+        """
         self._HOST: str = ""
         self._PORT: int = 0
         self.conn: socket.socket = None

@@ -43,8 +43,6 @@ class Textbox:
 
     @enter_command.setter
     def enter_command(self, command):
-        if self._enter_command:
-            raise
         self._enter_command = command
 
     def update(self, event) -> None:
