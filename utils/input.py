@@ -6,7 +6,7 @@ class Textbox:
                  size_w: int=140, size_h: int=30, inactive_color: pg.Color=pg.Color('lightskyblue3'),
                  active_color: pg.Color=pg.Color('dodgerblue2'),
                  filler_text: str="", filler_color: pg.Color = pg.Color("gray"),
-                 text_color: pg.Color=pg.Color("gray"),
+                 text_color: pg.Color=pg.Color("white"),
                  max_char: int=999):
         self.font = font
         self.size_w = size_w
@@ -47,6 +47,10 @@ class Textbox:
             raise
         self._enter_command = command
 
+    def update(self, event) -> None:
+        self.check_select(event)
+        self.type_text(event)
+        self.draw()
 
     def execute_enter(self) -> None:
         """
@@ -57,7 +61,6 @@ class Textbox:
             self._enter_command(text=self._text)
         else:
             self.enter_command(*self.args, text=self._text)
-
 
     def check_select(self, event) -> None:
         """
@@ -93,7 +96,6 @@ class Textbox:
                             self.text += event.unicode
                     self.display_text = self.text
                     self.update_display_text(self.display_text)
-
     
     def draw(self) -> None:
         """
@@ -105,7 +107,6 @@ class Textbox:
             txt_surface = self.font.render(self.display_text, True, self.text_color)
         self.window.blit(txt_surface, (self.input_box.x+5, self.input_box.y+5))
         pg.draw.rect(self.window, self.color, self.input_box, 2)
-        pg.display.flip()
     
     def remaining_text_wrap(self, text) -> int:
         """
