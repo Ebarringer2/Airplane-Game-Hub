@@ -50,6 +50,13 @@ class Textbox:
         self.type_text(event)
         self.draw()
 
+    def update_input(self, event) -> None:
+        self.check_select(event)
+        self.type_text(event)
+    
+    def update_draw(self) -> None:
+        self.draw()
+
     def execute_enter(self) -> None:
         """
         Execute custom command when RETURN key
