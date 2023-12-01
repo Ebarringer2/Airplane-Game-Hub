@@ -58,7 +58,7 @@ class Textbox:
         if not self.args:
             self._enter_command(text=self._text)
         else:
-            self.enter_command(*self.args, text=self._text)
+            self._enter_command(*self.args, text=self._text)
 
     def check_select(self, event) -> None:
         """
@@ -85,7 +85,7 @@ class Textbox:
                         self.text = ''
                     elif event.key == pg.K_BACKSPACE:
                         self.text = self.text[:-1]
-                    elif event.key == pg.K_v and event.mod & pg.KMOD_CTRL:
+                    elif event.key == pg.K_v and (event.mod & pg.KMOD_CTRL or event.mod & pg.KMOD_META):
                         paste = pg.scrap.get("text/plain;charset=utf-8").decode().replace("\x00", "")
                         if not len(self.text) + len(paste) > self.max_char:
                             self.text += paste
@@ -125,3 +125,9 @@ class Textbox:
                 self.display_text = text[1:]
         else:
             self.display_text = text
+    
+    def set_enter_command(self, command) -> None:
+        """
+        Change what happens when return key is clicked
+        """
+        self._enter_command = command

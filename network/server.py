@@ -1,15 +1,19 @@
 import socket
 from threading import Thread
 from random import randint, sample
+from typing import Union
 
 class Server:
-    def __init__(self, password: str = None,
+    def __init__(self, password: Union[str, None] = None,
                  host: str = socket.gethostbyname(socket.gethostname()),
                  port: int = randint(0, 65535), max_connections: int = 200):
         self.__HOST: str = host
         self.__PORT: int = port
         self.__KEY = None
-        self.__PASSWORD = password
+        if password is None:
+            self.__PASSWORD = ""
+        else:
+            self.__PASSWORD = password
         self.running: bool = False
         self.__SERVER: socket.socket = None
         self.max_conn = max_connections
@@ -108,7 +112,7 @@ class Server:
                 print(f"Current # of clients connected: {self.clients_conn}")
                 print(f"Connected by {addr}")
                 data = conn.recv(1024)
-                if data.decode() == self.PASSWORD.decode():
+                if data.decode().strip() == self.__PASSWORD:
                     conn.sendall(b"Connection Allowed")
                 else:
                     conn.sendall(b"1")

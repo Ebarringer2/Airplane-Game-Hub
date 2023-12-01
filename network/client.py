@@ -50,28 +50,45 @@ class Client:
             self.HOST = ".".join(host_tokens[int(index)] for index in decoder)
         except ValueError:
             print("Invalid key!")
+        return "test"
     
     def start_client(self) -> None:
         """
         Connect to server
         """
-        self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.conn.connect((self.HOST, self.PORT))
-        self.running = True
-        send = Thread(target=self.run_client)
-        send.start()
+        try:
+            self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            self.conn.connect((self.HOST, self.PORT))
+            self.running = True
+            send = Thread(target=self.run_client)
+            send.start()
+        except ConnectionRefusedError:
+            print("Couldn't connect to server...")
+        return "Connection"
     
     def run_client(self) -> None:
         """
-        Communicating with server
+        Receive from server
         """
         try:
             data = self.conn.recv(1024)
             if data == b"1":
                 raise ConnectionRefusedError
             print(f"Successfully Connected! Data outputted: {data.decode()}")
-        except ConnectionAbortedError:
+        except (ConnectionAbortedError, OSError):
             pass
+    
+    def send_data(self, text: str) -> None:
+        """
+        Send to server
+        
+        - data: to be encoded and converted to bytes
+        """
+        try:
+            self.conn.send(text.encode())
+        except (ConnectionAbortedError, ConnectionRefusedError):
+            print("Couldn't send data")
+        return "send data"
     
     def key_decoded(self) -> bool:
         """
