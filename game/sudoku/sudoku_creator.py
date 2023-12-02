@@ -1,9 +1,8 @@
-# script from https://www.geeksforgeeks.org/building-and-visualizing-sudoku-game-using-pygame/
+# coding help from https://www.geeksforgeeks.org/building-and-visualizing-sudoku-game-using-pygame/
+# material changed: added completely new 
 
 import pygame
-import sys
 from random import randint
-sys.path.append('../utils')
 
 ##import utils.output
 
@@ -15,7 +14,7 @@ font1 = pygame.font.SysFont('arial', 18)
 screen = pygame.display.set_mode((500, 600))
 
 # Title and Icon 
-pygame.display.set_caption("SUDOKU SOLVER USING BACKTRACKING")
+pygame.display.set_caption("SUDOKU")
 
 x = 0
 y = 0
@@ -52,7 +51,8 @@ def fill_grid_rand(board):
 	for row in range(9):
 		for col in range(9):
 			if board[row][col] == 0:
-				for num in range(1, 10):
+				for j in range(1, 10):
+					num = randint(1, 9)
 					if is_valid(board, row, col, num):
 						board[row][col] = num
 						if fill_grid_rand(board):
@@ -193,87 +193,62 @@ flag1 = 0
 flag2 = 0
 rs = 0
 error = 0
+
+def handle_input():
+    global x, y, val, grid, flag1, flag2, error, rs
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        if event.type == pygame.MOUSEBUTTONDOWN:
+            flag1 = 1
+            pos = pygame.mouse.get_pos()
+            get_cord(pos)
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_LEFT:
+                x -= 1
+                flag1 = 1
+            if event.key == pygame.K_RIGHT:
+                x += 1
+                flag1 = 1
+            if event.key == pygame.K_UP:
+                y -= 1
+                flag1 = 1
+            if event.key == pygame.K_DOWN:
+                y += 1
+                flag1 = 1
+            if event.key == pygame.K_1:
+                val = 1
+            if event.key == pygame.K_2:
+                val = 2
+            if event.key == pygame.K_3:
+                val = 3
+            if event.key == pygame.K_4:
+                val = 4
+            if event.key == pygame.K_5:
+                val = 5
+            if event.key == pygame.K_6:
+                val = 6
+            if event.key == pygame.K_7:
+                val = 7
+            if event.key == pygame.K_8:
+                val = 8
+            if event.key == pygame.K_9:
+                val = 9
+            if event.key == pygame.K_BACKSPACE:  # Delete value on backspace
+                val = 0
+            if event.key == pygame.K_RETURN:
+                flag2 = 1
+
+
 # The loop thats keep the window running
 while run:
 	
 	# White color background
 	screen.fill((255, 255, 255))
-	# Loop through the events stored in event.get()
-	for event in pygame.event.get():
-		# Quit the game window
-		if event.type == pygame.QUIT:
-			run = False
-		# Get the mouse position to insert number 
-		if event.type == pygame.MOUSEBUTTONDOWN:
-			flag1 = 1
-			pos = pygame.mouse.get_pos()
-			get_cord(pos)
-		# Get the number to be inserted if key pressed 
-		if event.type == pygame.KEYDOWN:
-			if event.key == pygame.K_LEFT:
-				x-= 1
-				flag1 = 1
-			if event.key == pygame.K_RIGHT:
-				x+= 1
-				flag1 = 1
-			if event.key == pygame.K_UP:
-				y-= 1
-				flag1 = 1
-			if event.key == pygame.K_DOWN:
-				y+= 1
-				flag1 = 1
-			if event.key == pygame.K_1:
-				val = 1
-			if event.key == pygame.K_2:
-				val = 2
-			if event.key == pygame.K_3:
-				val = 3
-			if event.key == pygame.K_4:
-				val = 4
-			if event.key == pygame.K_5:
-				val = 5
-			if event.key == pygame.K_6:
-				val = 6
-			if event.key == pygame.K_7:
-				val = 7
-			if event.key == pygame.K_8:
-				val = 8
-			if event.key == pygame.K_9:
-				val = 9
-			if event.key == pygame.K_RETURN:
-				flag2 = 1
-			# If R pressed clear the sudoku board
-			if event.key == pygame.K_r:
-				rs = 0
-				error = 0
-				flag2 = 0
-				grid =[
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0],
-				[0, 0, 0, 0, 0, 0, 0, 0, 0]
-				]
-			# If D is pressed reset the board to default 
-			if event.key == pygame.K_d:
-				rs = 0
-				error = 0
-				flag2 = 0
-				grid =[
-					[7, 8, 0, 4, 0, 0, 1, 2, 0],
-					[6, 0, 0, 0, 7, 5, 0, 0, 9],
-					[0, 0, 0, 6, 0, 1, 0, 7, 8],
-					[0, 0, 7, 0, 4, 0, 2, 6, 0],
-					[0, 0, 1, 0, 5, 0, 9, 3, 0],
-					[9, 0, 4, 0, 6, 0, 0, 0, 5],
-					[0, 7, 0, 3, 0, 0, 0, 1, 2],
-					[1, 2, 0, 0, 0, 7, 4, 0, 0],
-					[0, 4, 9, 2, 0, 6, 0, 0, 7]
-				]
+	
+	handle_input()
+
 	if flag2 == 1:
 		if solve(grid, 0, 0)== False:
 			error = 1
@@ -305,5 +280,4 @@ while run:
 	pygame.display.update() 
 
 # Quit pygame window 
-pygame.quit()	 
-	
+pygame.quit()
