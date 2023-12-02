@@ -6,7 +6,7 @@ class Textbox:
                  size_w: int=140, size_h: int=30, inactive_color: pg.Color=pg.Color('lightskyblue3'),
                  active_color: pg.Color=pg.Color('dodgerblue2'),
                  filler_text: str="", filler_color: pg.Color = pg.Color("gray"),
-                 text_color: pg.Color=pg.Color("white"),
+                 text_color: pg.Color=pg.Color("black"),
                  max_char: int=999):
         self.font = font
         self.size_w = size_w

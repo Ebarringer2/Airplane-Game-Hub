@@ -1,6 +1,6 @@
-import network.client as cl
-import utils.input as input
-import utils.output as output
+import game.network.client as cl
+import game.utils.input as input
+import game.utils.output as output
 import pygame as pg
 
 if __name__ == "__main__":
@@ -17,8 +17,7 @@ if __name__ == "__main__":
     while not done:
         screen.fill((30, 30, 30))
         for event in pg.event.get():
-            t.update(event)
-            text.draw()
+            t.update_input(event)
             if event.type == pg.QUIT:
                 done = True
                 if client.running:
@@ -31,5 +30,8 @@ if __name__ == "__main__":
         if mode == "enter_password":
             text.blit_l["room_id"][1][0] = "Enter Password:"
             t.set_enter_command(client.send_data)
+        t.update_draw()
+        text.draw()
+        pg.display.flip()
         clock.tick(60)
     pg.quit()

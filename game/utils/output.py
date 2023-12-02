@@ -3,7 +3,7 @@ from typing import Union
 
 class Text:
     def __init__(self, window: pg.display,
-                 font: pg.font.Font, color: pg.Color = pg.Color("white")):
+                 font: pg.font.Font, color: pg.Color = pg.Color("black")):
         self.window: pg.display = window
         self.font: pg.font.Font = font
         self.color: pg.Color = color
