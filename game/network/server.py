@@ -2,6 +2,7 @@ import socket
 from threading import Thread
 from random import randint, sample
 from typing import Union
+from atexit import register
 
 class Server:
     def __init__(self, password: Union[str, None] = None,
@@ -84,12 +85,13 @@ class Server:
         Start the server main loop
         """
         self.SERVER = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        register(self.close_server)
         self.SERVER.bind((self.HOST, self.PORT))
         self.running = True
         if not self.KEY:
             self.create_client_key()
         print(f"Started server...\nKEY: {self.KEY}")
-        listen = Thread(target=self.run_server())
+        listen = Thread(target=self.run_server)
         listen.start()
     
     def run_server(self) -> None:
@@ -122,4 +124,5 @@ class Server:
         print(f"Current # of clients connected: {self.clients_conn}")
     
     def close_server(self):
+        print("Closing server")
         self.SERVER.close()

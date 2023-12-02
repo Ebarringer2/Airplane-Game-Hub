@@ -1,5 +1,6 @@
 import socket
 from threading import Thread
+from atexit import register
 
 class Client:
     def __init__(self):
@@ -58,6 +59,7 @@ class Client:
         """
         try:
             self.conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            register(self.close_client)
             self.conn.connect((self.HOST, self.PORT))
             self.running = True
             send = Thread(target=self.run_client)

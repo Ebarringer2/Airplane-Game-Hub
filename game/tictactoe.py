@@ -4,7 +4,7 @@ from typing import Union
 from typing import List
 
 class TicTacToe:
-    def __init__(self, pos_x: int, pos_y: int, window: pg.display, type: str,
+    def __init__(self, pos_x: int, pos_y: int, window: pg.display, _type: str,
                  size: int, line_weight: int = 5, color: str = "black",
                  onclick = None, args: tuple = (), spacing: float = 4/5,
                  winning_color: str = "red"):
@@ -15,6 +15,7 @@ class TicTacToe:
         self.window: pg.display = window
         self.color: str = color
         self.increment: int = self.size // 3
+        self.type = _type
         self.grid_rects: List[pg.Rect] = [
             # Row 1
             pg.Rect(self.pos_x, self.pos_y, self.increment, self.increment),
@@ -78,11 +79,13 @@ class TicTacToe:
         """
         Check if any box has been clicked and update positions
         """
+        if self.has_won:
+            return
         if event.type == pg.MOUSEBUTTONDOWN:
             for box in range(len(self.grid_rects)):
                 if self.grid_rects[box].collidepoint(event.pos):
                     if not self.grid_drawings[box]:
-                        self.grid_drawings[box] = "cross"
+                        self.grid_drawings[box] = self.type
 
                     if self.onclick:
                         try:
@@ -125,3 +128,19 @@ class TicTacToe:
     def clear_board(self) -> None:
         self.grid_drawings = [None for box in range(9)]
         self.winning_line = None
+    
+    def set_box(self, id) -> None:
+        """
+        Set one of the grid's boxes to an opponents sign
+        """
+        self.grid_drawings[id-1] = "cross" if self.type == "circle" else "circle"
+        winner = self.check_for_winner()
+        if winner:
+            self.has_won = True
+            self.winning_line = (self.window, self.winning_color, winner[1], winner[2], self.line_weight*2)
+    
+    def clear_box(self, id) -> None:
+        """
+        Clear one of the grid's boxes
+        """
+        self.grid_drawings[id-1] = None
