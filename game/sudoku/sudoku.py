@@ -1,6 +1,6 @@
 # coding help from https://www.geeksforgeeks.org/building-and-visualizing-sudoku-game-using-pygame/
 # material changed: added completely new 
-
+import sys
 import pygame
 from random import randint
 
@@ -47,26 +47,117 @@ def is_valid(board, row, col, num):
 
     return True
 
-def fill_grid_rand(board):
-	for row in range(9):
-		for col in range(9):
-			if board[row][col] == 0:
-				for j in range(1, 10):
-					num = randint(1, 9)
-					if is_valid(board, row, col, num):
-						board[row][col] = num
-						if fill_grid_rand(board):
-							return True
-						board[row][col] = 0  # Backtrack if the current placement is not valid
-				return False
-	return True
+def solve_dancing_links(board):
+    def cover(i, j):
+        for c in range(9 * 4):
+            if dl_matrix[c][j] == 1:
+                column_sizes[c] -= 1
+
+        for r in range(9 * 9):
+            if dl_matrix[r][j] == 1:
+                for c in range(9 * 4):
+                    dl_matrix[r][c] = 0
+
+    def uncover(i, j):
+        for r in range(9 * 9):
+            if dl_matrix[r][j] == 1:
+                for c in range(9 * 4):
+                    dl_matrix[r][c] = matrix_backup[r][c]
+
+        for c in range(9 * 4):
+            if dl_matrix[c][j] == 1:
+                column_sizes[c] += 1
+
+    def search(k):
+        if k == 9 * 9:
+            return True
+
+        c = choose_column()
+        cover(0, c)
+
+        for r in range(9 * 9):
+            if dl_matrix[r][c] == 1:
+                solution.append(r)
+                for j in range(9 * 4):
+                    if dl_matrix[r][j] == 1:
+                        cover(r, j)
+
+                # Update pygame screen after each move
+                update_screen(board)
+
+                if search(k + 1):
+                    return True
+
+                solution.pop()
+                for j in range(9 * 4):
+                    if dl_matrix[r][j] == 1:
+                        uncover(r, j)
+
+        uncover(0, c)
+        return False
+
+    def choose_column():
+        min_size = float('inf')
+        chosen_column = -1
+
+        for j in range(9 * 4):
+            if column_sizes[j] < min_size:
+                min_size = column_sizes[j]
+                chosen_column = j
+
+        return chosen_column
+
+    def update_screen(board):
+        # Update pygame screen after each move
+        pygame.event.pump()
+        for r in solution:
+            i, j, num = r // 9, r % 9, (r % (9 * 4)) + 1
+            board[i][j] = num
+
+            # White color background
+            screen.fill((255, 255, 255))
+            draw()
+            draw_box()
+            pygame.display.update()
+            pygame.time.delay(20)
+
+    dl_matrix = [[0] * (9 * 4) for _ in range(9 * 9)]
+    matrix_backup = [[0] * (9 * 4) for _ in range(9 * 9)]
+    column_sizes = [9] * (9 * 4)
+    solution = []
+
+    for i in range(9):
+        for j in range(9):
+            if board[i][j] != 0:
+                num = board[i][j]
+                for k in range(1, 10):
+                    if k != num:
+                        dl_matrix[9 * i + j][((i * 9 + j) * 4) + k - 1] = 1
+
+    for i in range(9):
+        for j in range(9):
+            print(9 * i + j)
+            print(dl_matrix[9 * i + j])
+            for num in range(1, 10):
+                print(((i * 9 + j) * 4) + num - 1)
+                matrix_backup[9 * i + j][((i * 9 + j) * 4) + num - 1] = dl_matrix[9 * i + j][
+                    #((i * 9 + j) * 4) + num - 1]
+
+                    0]
+
+    search(0)
+
+    for r in solution:
+        i, j, num = r // 9, r % 9, (r % (9 * 4)) + 1
+        board[i][j] = num
+
 
 def generate_sudoku():
     # Start with an empty 9x9 grid
     board = [[0 for _ in range(9)] for _ in range(9)]
 
     # Fill the grid using the solve_sudoku function
-    fill_grid_rand(board)
+    solve_dancing_links(board)
 
     # Remove some digits to create the puzzle
     for _ in range(randint(90, 100)):
@@ -141,7 +232,7 @@ def valid(m, i, j, val):
 	return True
 
 # Solves the sudoku board using Backtracking Algorithm
-def solve(grid, i, j):
+'''def solve(grid, i, j):
 	
 	while grid[i][j]!= 0:
 		if i<8:
@@ -176,7 +267,7 @@ def solve(grid, i, j):
 			pygame.display.update()
 			pygame.time.delay(50) 
 	return False
-
+'''
 # Display instruction for the game
 def instruction():
 	text1 = font1.render("PRESS D TO RESET TO DEFAULT / R TO EMPTY", 1, (0, 0, 0))
@@ -250,7 +341,7 @@ while run:
 	handle_input()
 
 	if flag2 == 1:
-		if solve(grid, 0, 0)== False:
+		if solve_dancing_links(grid, 0, 0)== False:
 			error = 1
 		else:
 			rs = 1
