@@ -2,6 +2,7 @@
 
 import pygame
 import sys
+from random import randint
 sys.path.append('../utils')
 
 ##import utils.output
@@ -34,22 +35,47 @@ empty_grid = [
 	]
 
 def is_valid(board, row, col, num):
-    # Check if the number can be placed in the given row and column
-    for i in range(9):
-        if board[row][i] == num or board[i][col] == num or board[3 * (row // 3) + i // 3][3 * (col // 3) + i % 3] == num:
-            return False
+    # Check if the number is not already present in the current row and column
+    if num in board[row] or num in [board[i][col] for i in range(9)]:
+        return False
+
+    # Check if the number is not present in the 3x3 subgrid
+    start_row, start_col = 3 * (row // 3), 3 * (col // 3)
+    for i in range(3):
+        for j in range(3):
+            if board[start_row + i][start_col + j] == num:
+                return False
+
     return True
 
-def fill_grid(board):
-    for row in range(9):
-        for col in range(9):
-            if board[row][col] == 0:
-                for num in range(1, 10):
-                    if is_valid(board, row, col, num):
-                        board[row][col] = num
-                        if fill_grid(board):
-                            return True
-                        board[row][col] = 0
+def fill_grid_rand(board):
+	for row in range(9):
+		for col in range(9):
+			if board[row][col] == 0:
+				for num in range(1, 10):
+					if is_valid(board, row, col, num):
+						board[row][col] = num
+						if fill_grid_rand(board):
+							return True
+						board[row][col] = 0  # Backtrack if the current placement is not valid
+				return False
+	return True
+
+def generate_sudoku():
+    # Start with an empty 9x9 grid
+    board = [[0 for _ in range(9)] for _ in range(9)]
+
+    # Fill the grid using the solve_sudoku function
+    fill_grid_rand(board)
+
+    # Remove some digits to create the puzzle
+    for _ in range(randint(30, 50)):
+        row, col = randint(0, 8), randint(0, 8)
+        board[row][col] = 0
+
+    return board
+
+grid = generate_sudoku()
 
 def get_cord(pos):
 	global x
