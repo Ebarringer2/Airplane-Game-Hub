@@ -69,7 +69,7 @@ def generate_sudoku():
     fill_grid_rand(board)
 
     # Remove some digits to create the puzzle
-    for _ in range(randint(30, 50)):
+    for _ in range(randint(90, 100)):
         row, col = randint(0, 8), randint(0, 8)
         board[row][col] = 0
 
