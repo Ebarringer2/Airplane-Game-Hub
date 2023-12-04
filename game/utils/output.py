@@ -63,3 +63,6 @@ class Text:
             del self.blit_l[id]
         except KeyError:
             print(f"Cannot delete text object with key {id} from screen")
+    
+    def clear(self) -> None:
+        self.blit_l = {}

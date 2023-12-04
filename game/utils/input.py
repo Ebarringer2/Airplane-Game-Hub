@@ -45,11 +45,6 @@ class Textbox:
     def enter_command(self, command):
         self._enter_command = command
 
-    def update(self, event) -> None:
-        self.check_select(event)
-        self.type_text(event)
-        self.draw()
-
     def update_input(self, event) -> None:
         self.check_select(event)
         self.type_text(event)
