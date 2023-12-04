@@ -10,8 +10,6 @@ done = False
 screen = pg.display.set_mode((WIDTH, HEIGHT))
 clock = pg.time.Clock()
 grid = game.tictactoe.TicTacToe(WIDTH//2-200, HEIGHT//2-200, screen, "circle", 400, onclick=click)
-for _ in (1, 3, 5, 8):
-    grid.set_box(_)
 while not done:
     screen.fill((255, 255, 255))
     for event in pg.event.get():
