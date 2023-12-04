@@ -1,7 +1,6 @@
 # import from previous directories
 import pygame as pg
-from typing import Union
-from typing import List
+from typing import Union, List
 
 class TicTacToe:
     def __init__(self, pos_x: int, pos_y: int, window: pg.display, _type: str,
