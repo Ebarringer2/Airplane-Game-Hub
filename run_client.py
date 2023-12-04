@@ -1,4 +1,4 @@
-import game.network.client as cl
+import network.client as cl
 import game.utils.input as input
 import game.utils.output as output
 import pygame as pg

@@ -1,4 +1,4 @@
-import game.interface.ui
+import interface.ui
 import game.utils.input
 import game.utils.output
 import pygame as pg
@@ -16,7 +16,7 @@ t = game.utils.input.Textbox(50, 80, font=pg.font.Font(None, 32), window=screen,
 text = game.utils.output.Text(window=screen, font=pg.font.Font(None, 32))
 text.write(50, 50, "Room ID:", "room_id")
 
-page_group = game.interface.ui.Page()
+page_group = interface.ui.Page()
 el_g = [
     (t, t.update_draw, "t_in", "event", [t.update_input]),
     (text, text.draw, "t_out")

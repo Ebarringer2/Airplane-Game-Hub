@@ -1,4 +1,4 @@
-import game.interface.ui
+import interface.ui
 import game.utils.input
 import game.utils.output
 import pygame as pg
@@ -22,13 +22,13 @@ t2 = game.utils.input.Textbox(50, 80, font=pg.font.Font(None, 32), window=screen
 text2 = game.utils.output.Text(window=screen, font=pg.font.Font(None, 32))
 text2.write(50, 50, "Password:", "pwd")
 
-page1 = game.interface.ui.Page()
+page1 = interface.ui.Page()
 el_g = [
     (t, t.update_draw, "t_in", "event", [t.update_input]),
     (text, text.draw, "t_out")
 ]
 
-page2 = game.interface.ui.Page()
+page2 = interface.ui.Page()
 el_g_ = [
     (t2, t2.update_draw, "t_in", "event", [t2.update_input]),
     (text2, text2.draw, "t_out")
@@ -40,10 +40,10 @@ for _ in el_g:
 for _ in el_g_:
     page2.add(*_)
 
-page_group = game.interface.ui.PageGroup()
+page_group = interface.ui.PageGroup()
 page_group.add(page1, "p1")
 page_group.add(page2, "p2")
-page_group.select_page("p2")
+page_group.select_page("p1")
 
 
 while not done:

@@ -1,9 +1,9 @@
-import game.network.server
+import network.server
 import atexit
 
 
 
-server = game.network.server.Server(password="test")
+server = network.server.Server(password="test")
 server.start_server()
 
 
