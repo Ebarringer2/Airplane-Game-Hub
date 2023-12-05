@@ -55,7 +55,22 @@ def is_valid(board, row, col, num):
 
 # usage of dlx module to solve the sudoku board using dancing links algorithm
 def solve_dancing_links(board: List[List[int]]) -> List[List[int]]:
-    dlx_solver = dlx.DLX()
+    ## implementation ex. in DLX src code
+    #columns = [('a',DLX.PRIMARY), ('b',DLX.PRIMARY), ('c',DLX.PRIMARY), ('d',DLX.SECONDARY), ('e',DLX.PRIMARY)]
+    # then we need to create a columns array full of empty values
+    columns: List[List[str, int]] = []
+    for i in range(len(empty_grid)):
+        # initialize empty array
+        pair = []
+        # initialize str index for the column setup
+        pair_index = 'c' + str(i)
+        pair.append(pair_index)
+        # append column positional value
+        pair.append(0)
+        # append the pair to the columns 2d array
+        columns.append(pair)
+          
+    dlx_solver = dlx.DLX(columns)
     # Create a binary matrix for the Sudoku constraints
     matrix = []
     for i in range(9):
@@ -68,9 +83,8 @@ def solve_dancing_links(board: List[List[int]]) -> List[List[int]]:
                 row[3 * 9 * 9 + (i // 3 * 3 + j // 3) * 9 + num - 1] = 1
                 matrix.append(row)
     # Set the matrix in the dlx solver
-    dlx_solver.set(matrix)
     # Solve the puzzle
-    solutions = dlx_solver.solve(unique=True)
+    solutions = dlx_solver.solve()
     # Update the board with the solution
     if solutions:
         solution = solutions[0]
@@ -312,7 +326,9 @@ rs = 0
 error = 0
 
 def handle_input():
+    # declare global vars
     global x, y, val, grid, flag1, flag2, error, rs
+    # iterate through all of the users events 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
