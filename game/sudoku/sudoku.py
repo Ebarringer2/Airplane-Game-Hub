@@ -1,8 +1,14 @@
 # coding help from https://www.geeksforgeeks.org/building-and-visualizing-sudoku-game-using-pygame/
-# material changed: added completely new 
+###### MATERIAL CHANGED #####
+## removed solving algorithm in the original script
+## replaced it with a dancing links algorithm implementation
+## the Dancing Links paper is linked in README.md
+
 import sys
 import pygame
 from random import randint
+import dlx
+from typing import List # for type deffing 
 
 ##import utils.output
 
@@ -47,53 +53,78 @@ def is_valid(board, row, col, num):
 
     return True
 
+# usage of dlx module to solve the sudoku board using dancing links algorithm
+def solve_dancing_links(board: List[List[int]]) -> List[List[int]]:
+    dlx_solver = dlx.DLX()
+    # Create a binary matrix for the Sudoku constraints
+    matrix = []
+    for i in range(9):
+        for j in range(9):
+            for num in range(1, 10):
+                row = [0] * (9 * 9 * 4)
+                row[i * 9 + j] = 1
+                row[9 * 9 + i * 9 + num - 1] = 1
+                row[2 * 9 * 9 + j * 9 + num - 1] = 1
+                row[3 * 9 * 9 + (i // 3 * 3 + j // 3) * 9 + num - 1] = 1
+                matrix.append(row)
+    # Set the matrix in the dlx solver
+    dlx_solver.set(matrix)
+    # Solve the puzzle
+    solutions = dlx_solver.solve(unique=True)
+    # Update the board with the solution
+    if solutions:
+        solution = solutions[0]
+        for i, val in enumerate(solution):
+            if val == 1:
+                row, col, num = i // (9 * 9), (i % (9 * 9)) // 9, (i % (9 * 9)) % 9 + 1
+                board[row][col] = num
+
+# implementation of the dancing links algorithm to solve the sudoku board 
+# the algorithm stores 
+'''
 def solve_dancing_links(board):
     def cover(i, j):
-        for c in range(9 * 4):
+        for c in range(9 * 9):
             if dl_matrix[c][j] == 1:
                 column_sizes[c] -= 1
 
         for r in range(9 * 9):
             if dl_matrix[r][j] == 1:
-                for c in range(9 * 4):
+                for c in range(9 * 9):
                     dl_matrix[r][c] = 0
 
     def uncover(i, j):
         for r in range(9 * 9):
             if dl_matrix[r][j] == 1:
-                for c in range(9 * 4):
+                for c in range(9 * 9):
                     dl_matrix[r][c] = matrix_backup[r][c]
 
-        for c in range(9 * 4):
+        for c in range(9 * 9):
             if dl_matrix[c][j] == 1:
                 column_sizes[c] += 1
+
 
     def search(k):
         if k == 9 * 9:
             return True
-
         c = choose_column()
         cover(0, c)
-
         for r in range(9 * 9):
             if dl_matrix[r][c] == 1:
                 solution.append(r)
-                for j in range(9 * 4):
+                for j in range(9 * 9):
                     if dl_matrix[r][j] == 1:
                         cover(r, j)
-
                 # Update pygame screen after each move
                 update_screen(board)
-
                 if search(k + 1):
                     return True
-
                 solution.pop()
-                for j in range(9 * 4):
+                for j in range(9 * 9):
                     if dl_matrix[r][j] == 1:
                         uncover(r, j)
-
         uncover(0, c)
+        solution.clear()  # Clear solution list before backtracking
         return False
 
     def choose_column():
@@ -136,21 +167,16 @@ def solve_dancing_links(board):
 
     for i in range(9):
         for j in range(9):
-            print(9 * i + j)
-            print(dl_matrix[9 * i + j])
             for num in range(1, 10):
-                print(((i * 9 + j) * 4) + num - 1)
-                matrix_backup[9 * i + j][((i * 9 + j) * 4) + num - 1] = dl_matrix[9 * i + j][
-                    #((i * 9 + j) * 4) + num - 1]
-
-                    0]
+                matrix_backup[9 * i + j][((i * 9 + j) * 4) + num - 1] = dl_matrix[9 * i + j][((i * 9 + j) * 4) + num - 1]
 
     search(0)
+
 
     for r in solution:
         i, j, num = r // 9, r % 9, (r % (9 * 4)) + 1
         board[i][j] = num
-
+'''
 
 def generate_sudoku():
     # Start with an empty 9x9 grid
@@ -249,7 +275,7 @@ def valid(m, i, j, val):
 			global x, y
 			x = i
 			y = j
-			# white color background\
+			# white color background
 			screen.fill((255, 255, 255))
 			draw()
 			draw_box()
@@ -259,7 +285,7 @@ def valid(m, i, j, val):
 				return True
 			else:
 				grid[i][j]= 0
-			# white color background\
+			# white color background
 			screen.fill((255, 255, 255))
 		
 			draw()
