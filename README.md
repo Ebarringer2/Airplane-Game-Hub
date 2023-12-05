@@ -15,47 +15,40 @@ This project is a hub of games typically found during those long airplane rides 
 ### Installing
 
 * Go to the base GitHub [directory](https://github.com/Ebarringer2/Airplane-Game-Hub)
-* 
+* Click `Code` as shown below
+![image](https://github.com/Ebarringer2/Airplane-Game-Hub/assets/68877932/47cb1db1-e8f1-4dff-b8dd-f2ac9dc17e61)
+* Copy text show after clicking `GitHub CLI`
+![image](https://github.com/Ebarringer2/Airplane-Game-Hub/assets/68877932/33c00e59-b165-478a-a500-e30606bbd224)
+* Open up Git Bash
+* Change your working directory to wherever you want the game assets to be located
+* Paste the command previously copied and press enter
+* Install all dependencies in `requirements.txt` by running the follow command
+```
+pip install -r requirements.txt
+```
 
 ### Executing program
 
-* How to run the program
-* Step-by-step bullets
-```
-code blocks for commands
-```
-
-## Help
-
-Any advise for common problems or issues.
-```
-command to run if program contains helper info
-```
+* Locate to the game's directory
+* Run `main.py` using your python interpreter
 
 ## Authors
 
-Contributors names and contact info
+Shaunik Musukula
+[@shaunikm](https://github.come/shaunikm/)
 
-ex. Dominique Pizzie  
-ex. [@DomPizzie](https://twitter.com/dompizzie)
+Elliot Barringer
+[@Ebarringer2](https://github.com/Ebarringer2/)
 
 ## Version History
 
-* 0.2
-    * Various bug fixes and optimizations
-    * See [commit change]() or See [release history]()
-* 0.1
+* 0.1 (Current release)
     * Initial Release
 
 ## License
 
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
+This project is licensed under the MIT License - see the LICENSE.md file for details
 
 ## Acknowledgments
 
-Inspiration, code snippets, etc.
-* [awesome-readme](https://github.com/matiassingers/awesome-readme)
-* [PurpleBooth](https://gist.github.com/PurpleBooth/109311bb0361f32d87a2)
-* [dbader](https://github.com/dbader/readme-template)
-* [zenorocha](https://gist.github.com/zenorocha/4526327)
-* [fvcproductions](https://gist.github.com/fvcproductions/1bfc2d4aecb01a834b46)
+* [example](example)
