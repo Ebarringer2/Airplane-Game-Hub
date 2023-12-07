@@ -126,7 +126,27 @@ empty_grid = [
 		[0, 0, 0, 0, 0, 0, 0, 0, 0]
 	]
 
+def draw():
+	# Draw the lines
+		
+	for i in range (9):
+		for j in range (9):
+			if grid[i][j]!= 0:
 
+				# Fill blue color in already numbered grid
+				pygame.draw.rect(screen, (0, 153, 153), (i * dif, j * dif, dif + 1, dif + 1))
+
+				# Fill grid with default numbers specified
+				text1 = font1.render(str(grid[i][j]), 1, (0, 0, 0))
+				screen.blit(text1, (i * dif + 15, j * dif + 15))
+	# Draw lines horizontally and verticallyto form grid		 
+	for i in range(10):
+		if i % 3 == 0 :
+			thick = 7
+		else:
+			thick = 1
+		pygame.draw.line(screen, (0, 0, 0), (0, i * dif), (500, i * dif), thick)
+		pygame.draw.line(screen, (0, 0, 0), (i * dif, 0), (i * dif, 500), thick)	
 
 def is_valid(board, row, col, num):
     # Check if the number is not already present in the current row and column
@@ -194,35 +214,9 @@ def generate_sudoku():
         board[row][col] = 0
 
     return board
-
+	  
+# create grid
 grid = generate_sudoku()
-
-def draw():
-	# Draw the lines
-		
-	for i in range (9):
-		for j in range (9):
-			if grid[i][j]!= 0:
-
-				# Fill blue color in already numbered grid
-				pygame.draw.rect(screen, (0, 153, 153), (i * dif, j * dif, dif + 1, dif + 1))
-
-				# Fill grid with default numbers specified
-				text1 = font1.render(str(grid[i][j]), 1, (0, 0, 0))
-				screen.blit(text1, (i * dif + 15, j * dif + 15))
-	# Draw lines horizontally and verticallyto form grid		 
-	for i in range(10):
-		if i % 3 == 0 :
-			thick = 7
-		else:
-			thick = 1
-		pygame.draw.line(screen, (0, 0, 0), (0, i * dif), (500, i * dif), thick)
-		pygame.draw.line(screen, (0, 0, 0), (i * dif, 0), (i * dif, 500), thick)	
-
-# Function to draw required lines for making Sudoku grid		 
- 
-
-
 
 '''
 # usage of dlx module to solve the sudoku board using dancing links algorithm
