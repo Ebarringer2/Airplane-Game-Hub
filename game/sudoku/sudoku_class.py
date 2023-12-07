@@ -10,6 +10,12 @@ class Sudoku:
         self.y = 0
         self.dif = 500 / 9
         self.val = 0
+        # init mutables for the obj
+        self.run = False
+        self.flag1 = 0
+        self.flag2 = 0
+        self.rs = 0
+        self.error = 0
 		# init pygame bases
         pygame.font.init()
         self.font1 = pygame.font.SysFont('arial', 18)
@@ -31,10 +37,8 @@ class Sudoku:
         for i in range (9):
             for j in range (9):
                 if self.grid[i][j]!= 0:
-
 				    # Fill blue color in already numbered grid
                     pygame.draw.rect(self.screen, (0, 153, 153), (i * self.dif, j * self.dif, self.dif + 1, self.dif + 1))
-
 				    # Fill grid with default numbers specified
                     text1 = self.font1.render(str(self.grid[i][j]), 1, (0, 0, 0))
                     self.screen.blit(text1, (i * self.dif + 15, j * self.dif + 15))
@@ -118,3 +122,107 @@ class Sudoku:
     def draw_val(self, val):
         text1 = self.font1.render("wrong", 1, (0, 0, 0))
         self.screen.blit(text1, (x * self.dif + 15, y * self.dif + 15))
+    # raise error for wrong value
+    def raise_error1(self):
+        text1 = self.font1.render("wrong", 1, (0, 0, 0))
+        self.screen.blit(text1, (20, 570))
+    def raise_error2(self):
+        text1 = self.font1.render("not a valid key", 1, (0, 0, 0))
+        self.screen.blit(text1, (20, 570))
+    # check if a val entered is valid
+    def valid(m, i, j, val):
+        for it in range(9):
+            if m[i][it] == val:
+                return False
+            if m[it][j] == val:
+                return False
+        it = i // 3
+        jt = j // 3
+        for i in range(it * 3, it * 3 + 3):
+            for j in range(jt * 3, jt * 3 + 3):
+                if m[i][j] == val:
+                    return False
+        return True
+    # method for displaying instructions
+    def instruction(self):
+        text1 = self.font1.render("PRESS D TO RESET TO DEFAULT / R TO EMPTY", 1, (0, 0, 0))
+        text2 = self.font1.render("ENTER VALUES AND PRESS ENTER TO VISUALIZE", 1, (0, 0, 0))
+        self.screen.blit(text1, (20, 520))	
+    # method for handling user input
+    def handle_input(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                self.flag1 = 1
+                pos = pygame.mouse.get_pos()
+                self.get_cord(pos)
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.x -= 1
+                    self.flag1 = 1
+                if event.key == pygame.K_RIGHT:
+                    self.x += 1
+                    self.flag1 = 1
+                if event.key == pygame.K_UP:
+                    self.y -= 1
+                    self.flag1 = 1
+                if event.key == pygame.K_DOWN:
+                    self.y += 1
+                    self.flag1 = 1
+                # value input handling
+                if event.key == pygame.K_1:
+                    self.val = 1
+                if event.key == pygame.K_2:
+                    self.val = 2
+                if event.key == pygame.K_3:
+                    self.val = 3
+                if event.key == pygame.K_4:
+                    self.val = 4
+                if event.key == pygame.K_5:
+                    self.val = 5
+                if event.key == pygame.K_6:
+                    self.val = 6
+                if event.key == pygame.K_7:
+                    self.val = 7
+                if event.key == pygame.K_8:
+                    self.val = 8
+                if event.key == pygame.K_9:
+                    self.val = 9
+                # delete val on backspace
+                if event.key == pygame.K_BACKSPACE:
+                    self.val = 0
+                if event.key == pygame.K_RETURN:
+                    self.flag2 = 1
+    # run method
+    def run(self):
+        self.run = True
+        while self.run:
+            # white background
+            self.screen.fill((255, 255, 255))
+            self.handle_input()
+            # process user input
+            if self.flag2 == 1:
+                if self.solve(self.grid, 0, 0) == False:
+                    self.error = 1
+                else:
+                    self.rs = 1
+            if self.val != 0:
+                self.draw_val(self.val)
+                if self.valid(self.grid, int(self.x), int(self.y), self.val):
+                    self.grid[int(self.x)][int(self.y)] = self.val
+                    self.flag1 = 0
+                else:
+                    self.grid[int(self.x)][int(self.y)] = 0
+                    self.raise_error2()
+                self.val = 0
+            # handle errors
+            if self.error == 1:
+                self.raise_error1()
+            self.draw()
+            if self.flag1 == 1:
+                self.draw_box()
+            self.instruction()
+            # update window
+            pygame.display.update()
