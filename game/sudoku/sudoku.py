@@ -3,14 +3,101 @@
 ## removed solving algorithm in the original script
 ## replaced it with a dancing links algorithm implementation
 ## the Dancing Links paper is linked in README.md
+# DLX Sudoku Class source: https://github.com/sraaphorst/dlx-python/blob/master/examples/sudoku.py
 
 import sys
 import pygame
 from random import randint
 import dlx
+from functools import reduce
 from typing import List # for type deffing 
 
 ##import utils.output
+
+# sudoku solver using the DLX algorithm 
+'''class DLXsudoku(dlx.DLX):
+    def __init__(self, grid, dim=3):
+        //''Create a DLX instance representing the dim^2 by dim^2 Sudoku board
+        represented by grid, which is a string of length dim^4. grid represents
+        the contents of the board read from left-to-right and top-to-bottom,
+        with entries from {0,...,dim^2}, where 0 represents an empty space in
+        the board, and {1,...,dim^2} represent filled entries.''
+
+        # Create the columns.
+        ctr = 0
+        cols = []
+
+        self.dim = dim
+        self.dimsq = dim**2
+
+        # Create the row coverage, which determines that entry j appears in row i.
+        for i in range(self.dimsq):
+            cols += [(('r',i,j),ctr+j-1) for j in range(1,self.dimsq+1)]
+            ctr += self.dimsq
+
+        # Create the column coverage, which determines that entry j appears in column i.
+        for i in range(self.dimsq):
+            cols += [(('c',i,j),ctr+j-1) for j in range(1,self.dimsq+1)]
+            ctr += self.dimsq
+
+        # Create the grid coverage, which determines that entry k appears in grid i,j.
+        for i in range(dim):
+            for j in range(dim):
+                cols += [(('g',i,j,k),ctr+k-1) for k in range(1,self.dimsq+1)]
+                ctr += self.dimsq
+
+        # Create the entry coverage, which determines that entry i,j in the grid is occupied.
+        for i in range(self.dimsq):
+            cols += [(('e',i,j),ctr+j) for j in range(self.dimsq)]
+            ctr += self.dimsq
+
+        # Create a dictionary from this, which maps column name to column index.
+        sdict = dict(cols)
+
+        # Create the DLX object.
+        dlx.DLX.__init__(self, [(colname[0], dlx.DLX.PRIMARY) for colname in cols])
+
+        # Now create all possible rows.
+        rowdict = {}
+        self.lookupdict = {}
+        for i in range(self.dimsq):
+            for j in range(self.dimsq):
+                for k in range(1,self.dimsq+1):
+                    val =  self.appendRow([sdict[('r',i,k)], sdict[('c',j,k)], sdict[('g',i//dim,j//dim,k)], sdict[('e',i,j)]], (i,j,k))
+                    rowdict[(i,j,k)] = val
+                    self.lookupdict[val] = (i,j,k)
+
+        # Now we want to process grid, which we take to be a string of length 81 representing the puzzle.
+        # An entry of 0 means blank.
+        for i in range(self.dimsq**2):
+            if grid[i] != '0':
+                self.useRow(rowdict[(i//self.dimsq,i%self.dimsq,int(grid[i]))])
+
+
+    def createSolutionGrid(self, sol):
+        ''Return a two dimensional grid representing the solution.''
+
+        # We need to determine what is represented by each row. This is easily accessed by rowname.
+        solgrid = [['0']*self.dimsq for i in range(self.dimsq)]
+        for a in sol:
+            i,j,k = self.N[a]
+            solgrid[i][j] = k
+        return solgrid
+
+
+    def createSolutionGridString(self, sol):
+        ''Create a string representing the solution grid in nice format.''
+
+        grid = self.createSolutionGrid(sol)
+        return reduce(lambda x,y:x+y, [reduce(lambda x,y:x+y, [str(grid[r][c]) + ('|' if c % self.dim == self.dim-1 and c != self.dimsq-1 else '') for c in range(self.dimsq)], '') + ('\n' if r != self.dimsq-1 else '') + ((('-'*self.dim + '+')*(self.dim-1) + '-'*self.dim + '\n') if r % self.dim == self.dim-1 and r != self.dimsq-1 else '') for r in range(self.dimsq)], '')
+                
+
+    def createSolutionString(self, sol):
+        //Return a string representation of the solution, read from left-to-right
+        and top-to-bottom.
+
+        return reduce(lambda x,y:x+y, map(str, reduce(lambda x,y:x+y, self.createSolutionGrid(sol), [])), '')
+'''
 
 # initialise the pygame font
 pygame.font.init()
@@ -39,6 +126,8 @@ empty_grid = [
 		[0, 0, 0, 0, 0, 0, 0, 0, 0]
 	]
 
+
+
 def is_valid(board, row, col, num):
     # Check if the number is not already present in the current row and column
     if num in board[row] or num in [board[i][col] for i in range(9)]:
@@ -52,7 +141,90 @@ def is_valid(board, row, col, num):
                 return False
 
     return True
+### SOLVING ALGORITHM USING BACKTRACKING -- ONLY ALGO THAT ACTUALLY WORKS
+def solve(grid, i, j):
+	
+	while grid[i][j]!= 0:
+		if i<8:
+			i+= 1
+		elif i == 8 and j<8:
+			i = 0
+			j+= 1
+		elif i == 8 and j == 8:
+			return True
+	pygame.event.pump() 
+	for it in range(1, 10):
+		if is_valid(grid, i, j, it)== True:
+			grid[i][j]= it
+			global x, y
+			x = i
+			y = j
+			# white color background
+			screen.fill((255, 255, 255))
+			draw()
+			draw_box()
+			pygame.display.update()
+			pygame.time.delay(20)
+			if solve(grid, i, j)== 1:
+				return True
+			else:
+				grid[i][j]= 0
+			# white color background
+			screen.fill((255, 255, 255))
+		
+			draw()
+			draw_box()
+			pygame.display.update()
+			pygame.time.delay(50) 
+	return False
 
+def generate_sudoku():
+    # Start with an empty 9x9 grid
+    board = [[0 for _ in range(9)] for _ in range(9)]
+
+    # Fill the grid using the solve_sudoku function
+    #solve(board)
+    for i in range(1, 9):
+          for j in range(1, 9):
+                solve(board, i, j)
+          
+    # Remove some digits to create the puzzle
+    for _ in range(randint(90, 100)):
+        row, col = randint(0, 8), randint(0, 8)
+        board[row][col] = 0
+
+    return board
+
+grid = generate_sudoku()
+
+def draw():
+	# Draw the lines
+		
+	for i in range (9):
+		for j in range (9):
+			if grid[i][j]!= 0:
+
+				# Fill blue color in already numbered grid
+				pygame.draw.rect(screen, (0, 153, 153), (i * dif, j * dif, dif + 1, dif + 1))
+
+				# Fill grid with default numbers specified
+				text1 = font1.render(str(grid[i][j]), 1, (0, 0, 0))
+				screen.blit(text1, (i * dif + 15, j * dif + 15))
+	# Draw lines horizontally and verticallyto form grid		 
+	for i in range(10):
+		if i % 3 == 0 :
+			thick = 7
+		else:
+			thick = 1
+		pygame.draw.line(screen, (0, 0, 0), (0, i * dif), (500, i * dif), thick)
+		pygame.draw.line(screen, (0, 0, 0), (i * dif, 0), (i * dif, 500), thick)	
+
+# Function to draw required lines for making Sudoku grid		 
+ 
+
+
+
+'''
 # usage of dlx module to solve the sudoku board using dancing links algorithm
 def solve_dancing_links(board: List[List[int]]) -> List[List[int]]:
     ## implementation ex. in DLX src code
@@ -70,7 +242,7 @@ def solve_dancing_links(board: List[List[int]]) -> List[List[int]]:
         # append the pair to the columns 2d array
         columns.append(pair)
           
-    dlx_solver = dlx.DLX(columns)
+    dlx_solver = dlx.DLX()
     # Create a binary matrix for the Sudoku constraints
     matrix = []
     for i in range(9):
@@ -92,7 +264,7 @@ def solve_dancing_links(board: List[List[int]]) -> List[List[int]]:
             if val == 1:
                 row, col, num = i // (9 * 9), (i % (9 * 9)) // 9, (i % (9 * 9)) % 9 + 1
                 board[row][col] = num
-
+'''
 # implementation of the dancing links algorithm to solve the sudoku board 
 # the algorithm stores 
 '''
@@ -192,21 +364,7 @@ def solve_dancing_links(board):
         board[i][j] = num
 '''
 
-def generate_sudoku():
-    # Start with an empty 9x9 grid
-    board = [[0 for _ in range(9)] for _ in range(9)]
 
-    # Fill the grid using the solve_sudoku function
-    solve_dancing_links(board)
-
-    # Remove some digits to create the puzzle
-    for _ in range(randint(90, 100)):
-        row, col = randint(0, 8), randint(0, 8)
-        board[row][col] = 0
-
-    return board
-
-grid = generate_sudoku()
 
 def get_cord(pos):
 	global x
@@ -220,28 +378,7 @@ def draw_box():
 		pygame.draw.line(screen, (255, 0, 0), (x * dif-3, (y + i)*dif), (x * dif + dif + 3, (y + i)*dif), 7)
 		pygame.draw.line(screen, (255, 0, 0), ( (x + i)* dif, y * dif ), ((x + i) * dif, y * dif + dif), 7) 
 
-# Function to draw required lines for making Sudoku grid		 
-def draw():
-	# Draw the lines
-		
-	for i in range (9):
-		for j in range (9):
-			if grid[i][j]!= 0:
 
-				# Fill blue color in already numbered grid
-				pygame.draw.rect(screen, (0, 153, 153), (i * dif, j * dif, dif + 1, dif + 1))
-
-				# Fill grid with default numbers specified
-				text1 = font1.render(str(grid[i][j]), 1, (0, 0, 0))
-				screen.blit(text1, (i * dif + 15, j * dif + 15))
-	# Draw lines horizontally and verticallyto form grid		 
-	for i in range(10):
-		if i % 3 == 0 :
-			thick = 7
-		else:
-			thick = 1
-		pygame.draw.line(screen, (0, 0, 0), (0, i * dif), (500, i * dif), thick)
-		pygame.draw.line(screen, (0, 0, 0), (i * dif, 0), (i * dif, 500), thick)	 
 
 # Fill value entered in cell	 
 def draw_val(val):
@@ -272,42 +409,8 @@ def valid(m, i, j, val):
 	return True
 
 # Solves the sudoku board using Backtracking Algorithm
-'''def solve(grid, i, j):
-	
-	while grid[i][j]!= 0:
-		if i<8:
-			i+= 1
-		elif i == 8 and j<8:
-			i = 0
-			j+= 1
-		elif i == 8 and j == 8:
-			return True
-	pygame.event.pump() 
-	for it in range(1, 10):
-		if valid(grid, i, j, it)== True:
-			grid[i][j]= it
-			global x, y
-			x = i
-			y = j
-			# white color background
-			screen.fill((255, 255, 255))
-			draw()
-			draw_box()
-			pygame.display.update()
-			pygame.time.delay(20)
-			if solve(grid, i, j)== 1:
-				return True
-			else:
-				grid[i][j]= 0
-			# white color background
-			screen.fill((255, 255, 255))
-		
-			draw()
-			draw_box()
-			pygame.display.update()
-			pygame.time.delay(50) 
-	return False
-'''
+
+
 # Display instruction for the game
 def instruction():
 	text1 = font1.render("PRESS D TO RESET TO DEFAULT / R TO EMPTY", 1, (0, 0, 0))
@@ -383,7 +486,7 @@ while run:
 	handle_input()
 
 	if flag2 == 1:
-		if solve_dancing_links(grid, 0, 0)== False:
+		if solve(grid, 0, 0)== False:
 			error = 1
 		else:
 			rs = 1
