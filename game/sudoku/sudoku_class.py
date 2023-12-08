@@ -11,7 +11,7 @@ class Sudoku:
         self.dif = 500 / 9
         self.val = 0
         # init mutables for the obj
-        self.run = False
+        self.running = False
         self.flag1 = 0
         self.flag2 = 0
         self.rs = 0
@@ -74,7 +74,7 @@ class Sudoku:
                 return True
         pygame.event.pump()
         for it in range(1, 10):
-            if self.is_valid(self.grid, i, j, it):
+            if self.is_valid(i, j, it):
                 self.grid[i][j] = it
                 global x, y
                 x = i
@@ -84,11 +84,11 @@ class Sudoku:
                 self.draw_box()
                 pygame.display.update()
                 pygame.time.delay(20)
-                if self.solve(self.grid, i, j) == 1:
+                if self.solve(i, j) == 1:
                     return True
                 else:
                     self.grid[i][j] = 0
-                self.screen((255, 255, 255))
+                self.screen.fill((255, 255, 255))
 
                 self.draw()
                 self.draw_box()
@@ -97,17 +97,23 @@ class Sudoku:
         return False
     # method to create the puzle
     def generate_sudoku(self):
+        print("Generating Sudoku")
         # init with empty 9x9 grid
         board = [[0 for _ in range(9)] for _ in range(9)]
+        # copy the initial state of the grid
+        for i in range(9):
+            for j in range(9):
+                board[i][j] = self.grid[i][j]
         # fill the grid using the solve method
         for i in range(9):
             for j in range(9):
-                self.solve(board, i, j)
+                self.solve(i, j, board)
         # remove some digits to create the puzzle
-        for _ in range(randint(90, 100)):
+        for _ in range(randint(10, 20)):
+            print("Removing digits, adding zeroes")
             row, col = randint(0, 8), randint(0, 8)
             board[row][col] = 0
-        return board
+        self.grid = board
     # getting cords for the mouse
     def get_cord(self, pos):
         global x, y
@@ -197,8 +203,9 @@ class Sudoku:
                     self.flag2 = 1
     # run method
     def run(self):
-        self.run = True
-        while self.run:
+        self.running = True
+        self.generate_sudoku()
+        while self.running:
             # white background
             self.screen.fill((255, 255, 255))
             self.handle_input()
@@ -210,7 +217,7 @@ class Sudoku:
                     self.rs = 1
             if self.val != 0:
                 self.draw_val(self.val)
-                if self.valid(self.grid, int(self.x), int(self.y), self.val):
+                if self.valid(int(self.x), int(self.y), self.val):
                     self.grid[int(self.x)][int(self.y)] = self.val
                     self.flag1 = 0
                 else:
