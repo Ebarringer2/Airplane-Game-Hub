@@ -107,7 +107,7 @@ class Sudoku:
         # fill the grid using the solve method
         for i in range(9):
             for j in range(9):
-                self.solve(i, j, board)
+                self.solve(i, j)
         # remove some digits to create the puzzle
         for _ in range(randint(10, 20)):
             print("Removing digits, adding zeroes")
