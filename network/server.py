@@ -3,6 +3,7 @@ from threading import Thread
 from random import randint, sample
 from typing import Union
 from atexit import register
+from json import dumps, loads
 
 class Server:
     def __init__(self, password: Union[str, None] = None,
@@ -126,3 +127,32 @@ class Server:
     def close_server(self):
         print("Closing server")
         self.SERVER.close()
+
+class TicTacToeServer(Server):
+    def __init__(self):
+        super().__init__(max_connections=1)
+        self.board = {
+            1 : None,
+            2 : None,
+            3 : None,
+            4 : None,
+            5 : None,
+            6 : None,
+            7 : None,
+            8 : None,
+            9 : None
+        }
+        self.tic = "cross"
+    
+    def accept_client(self, conn: socket, addr: socket._RetAddress) -> None:
+        try:
+            with conn:
+                self.clients_conn += 1
+                while True:
+                    data = loads(conn.recv(1024))
+                    for place, value in data.items():
+                        self.board[place] = value
+                    conn.sendall(dumps(self.board))
+        except (ConnectionRefusedError, ConnectionAbortedError):
+            pass
+        self.clients_conn -= 1

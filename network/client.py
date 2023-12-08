@@ -1,6 +1,7 @@
 import socket
 from threading import Thread
 from atexit import register
+from json import loads, dumps
 
 class Client:
     def __init__(self):
@@ -53,7 +54,7 @@ class Client:
             print("Invalid key!")
         return "test"
     
-    def start_client(self) -> None:
+    def start_client(self) -> int:
         """
         Connect to server
         """
@@ -65,8 +66,8 @@ class Client:
             send = Thread(target=self.run_client)
             send.start()
         except ConnectionRefusedError:
-            print("Couldn't connect to server...")
-        return "Connection"
+            return -1
+        return 0
     
     def run_client(self) -> None:
         """
@@ -97,7 +98,39 @@ class Client:
         Check if HOST and PORT attributes already have
         values.
         """
-        return self._HOST and self._PORT
+        return self._HOST and self._PORTv
     
     def close_client(self) -> None:
         self.conn.close()
+
+class TicTacToe(Client):
+    def __init__(self):
+        super().__init__()
+        self.board = {
+            1 : None,
+            2 : None,
+            3 : None,
+            4 : None,
+            5 : None,
+            6 : None,
+            7 : None,
+            8 : None,
+            9 : None
+        }
+    
+    def run_client(self) -> None:
+        try:
+            while True:
+                data = loads(self.conn.recv(1024))
+                for place, value in data.items():
+                    self.board[place] = value
+                self.send_data(self.board)
+        except (ConnectionAbortedError, ConnectionRefusedError):
+            raise ConnectionAbortedError
+            
+    
+    def send_data(self, data : dict) -> None:
+        try:
+            self.conn.sendall(dumps(data))
+        except (ConnectionAbortedError, ConnectionRefusedError):
+            raise ConnectionAbortedError

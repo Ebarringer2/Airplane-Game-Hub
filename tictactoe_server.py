@@ -1,15 +1,23 @@
-import pygame as pg
 import game.game.tictactoe
-from game.settings import *
+import network.server
+import interface.ui
+import pygame as pg
 
-def click(number: int):
-    print(f"Board clicked!   |   Box #{number} clicked")
+def click():
+    print("Server clicked")
 
 pg.init()
 done = False
-screen = pg.display.set_mode((WIDTH, HEIGHT))
+screen = pg.display.set_mode((480, 500))
 clock = pg.time.Clock()
-grid = game.game.tictactoe.TicTacToe(WIDTH//2-200, HEIGHT//2-200, screen, "circle", 400, onclick=click)
+grid = game.game.tictactoe.TicTacToe(
+    50,
+    50,
+    screen,
+    "circle",
+    400,
+    onclick=click
+)
 
 while not done:
     screen.fill((255, 255, 255))

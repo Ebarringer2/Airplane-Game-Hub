@@ -38,6 +38,7 @@ class TicTacToe:
         self.has_won: bool = False
         self.winning_line: Union[tuple, None] = None
         self.winning_color = winning_color
+        self.on_turn = True
     
     def draw_grid(self) -> None:
         """
@@ -79,6 +80,8 @@ class TicTacToe:
         Check if any box has been clicked and update positions
         """
         if self.has_won:
+            return
+        if not self.on_turn:
             return
         if event.type == pg.MOUSEBUTTONDOWN:
             for box in range(len(self.grid_rects)):
@@ -143,3 +146,6 @@ class TicTacToe:
         Clear one of the grid's boxes
         """
         self.grid_drawings[id-1] = None
+    
+    def change_turn(self):
+        self.on_turn = not self.on_turn
