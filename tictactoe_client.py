@@ -1,10 +1,10 @@
 import game.game.tictactoe
-import network.server
+import network.client
 import interface.ui
 import pygame as pg
 
 def click():
-    print("Server clicked")
+    print("Client clicked")
 
 pg.init()
 done = False
@@ -14,13 +14,15 @@ grid = game.game.tictactoe.TicTacToe(
     50,
     50,
     screen,
-    "circle",
+    "cross",
     400,
     onclick=click
 )
 
-server = network.server.TicTacToeServer()
-server.start_server()
+client = network.client.TicTacToeClient()
+key = input("Enter key: ")
+client.decode_client_key(key)
+client.start_client()
 
 while not done:
     screen.fill((255, 255, 255))
@@ -28,9 +30,9 @@ while not done:
         grid.check_click(event)
         if event.type == pg.QUIT:
             done = True
-    server.read_board(grid.grid_drawings)
+    client.read_board(grid.grid_drawings)
     grid.draw_grid()
     pg.display.flip()
     clock.tick(60)
-server.close_server()
+client.close_client()
 pg.quit()

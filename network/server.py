@@ -1,7 +1,7 @@
 import socket
 from threading import Thread
 from random import randint, sample
-from typing import Union
+from typing import Union, List
 from atexit import register
 from json import dumps, loads
 
@@ -143,16 +143,33 @@ class TicTacToeServer(Server):
             9 : None
         }
         self.tic = "cross"
+        self.clients_connected = False
     
-    def accept_client(self, conn: socket, addr: socket._RetAddress) -> None:
+    def accept_client(self, conn: socket, addr) -> None:
+        self.clients_connected = True
         try:
             with conn:
                 self.clients_conn += 1
                 while True:
-                    data = loads(conn.recv(1024))
-                    for place, value in data.items():
-                        self.board[place] = value
-                    conn.sendall(dumps(self.board))
+                    # data = loads(conn.recv(1024))
+                    # for place, value in data.items():
+                    #     self.board[place] = value
+                    data = {"data" : self.board}
+                    conn.sendall(dumps(data).encode())
         except (ConnectionRefusedError, ConnectionAbortedError):
             pass
         self.clients_conn -= 1
+        self.clients_connected = False
+    
+    def read_board(self, board: List[int]):
+        """
+        board is a list of positions on the board.
+        each position can have three possible
+        values: None, cross, and circle.
+        Example:
+        [None, None, None,
+        cross, None, circle,
+        None, cross, circle]
+        """
+        for _ in range(9):
+            self.board[_+1] = board[_]
