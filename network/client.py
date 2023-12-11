@@ -2,6 +2,7 @@ import socket
 from threading import Thread
 from atexit import register
 from json import loads, dumps
+from typing import List
 
 class Client:
     def __init__(self):
@@ -98,12 +99,12 @@ class Client:
         Check if HOST and PORT attributes already have
         values.
         """
-        return self._HOST and self._PORTv
+        return self._HOST and self._PORT
     
     def close_client(self) -> None:
         self.conn.close()
 
-class TicTacToe(Client):
+class TicTacToeClient(Client):
     def __init__(self):
         super().__init__()
         self.board = {
@@ -121,16 +122,30 @@ class TicTacToe(Client):
     def run_client(self) -> None:
         try:
             while True:
-                data = loads(self.conn.recv(1024))
+                # self.send_data(self.board)
+                data = loads(self.conn.recv(1024).decode())
+                print(data)
                 for place, value in data.items():
                     self.board[place] = value
-                self.send_data(self.board)
         except (ConnectionAbortedError, ConnectionRefusedError):
             raise ConnectionAbortedError
             
     
     def send_data(self, data : dict) -> None:
         try:
-            self.conn.sendall(dumps(data))
+            self.conn.sendall(dumps(data).encode())
         except (ConnectionAbortedError, ConnectionRefusedError):
             raise ConnectionAbortedError
+    
+    def read_board(self, board: List[int]):
+        """
+        board is a list of positions on the board.
+        each position can have three values: None,
+        cross, and circle.
+        Example:
+        [None, None, None,
+        cross, None, circle,
+        None, cross, circle]
+        """
+        for _ in range(9):
+            self.board[_+1] = board[_]
