@@ -117,14 +117,17 @@ class Sudoku:
         self.grid = board
     # getting cords for the mouse
     def get_cord(self, pos):
-        global x, y
+        #global x, y
         x = pos[0] // self.dif
         y = pos[1] // self.dif
+        # set grid cords to pos of mouse
+        self.x = x 
+        self.y = y
     # highlight selected cell
     def draw_box(self):
         for i in range(2):
-            pygame.draw.line(self.screen, (255, 0, 0), (x * self.dif-3, (y + i)*self.dif), (x * self.dif + self.dif + 3, (y + i)*self.dif), 7)
-            pygame.draw.line(self.screen, (255, 0, 0), ( (x + i)* self.dif, y * self.dif ), ((x + i) * self.dif, y * self.dif + self.dif), 7) 
+            pygame.draw.line(self.screen, (255, 0, 0), (self.x * self.dif-3, (self.y + i)*self.dif), (self.x * self.dif + self.dif + 3, (self.y + i)*self.dif), 7)
+            pygame.draw.line(self.screen, (255, 0, 0), ( (self.x + i)* self.dif, self.y * self.dif ), ((self.x + i) * self.dif, self.y * self.dif + self.dif), 7) 
     # fill cell with entered val
     def draw_val(self, val):
         text1 = self.font1.render("wrong", 1, (0, 0, 0))
@@ -155,6 +158,11 @@ class Sudoku:
         text1 = self.font1.render("PRESS D TO RESET TO DEFAULT / R TO EMPTY", 1, (0, 0, 0))
         text2 = self.font1.render("ENTER VALUES AND PRESS ENTER TO VISUALIZE", 1, (0, 0, 0))
         self.screen.blit(text1, (20, 520))	
+    # method for telling the user their position on the screen
+    def display_pos(self):
+        text1 = self.font1.render("Position: " + " x: " + str(self.x) + " y: " + str(self.y), 1, (0, 0, 0))
+        self.screen.blit(text1, (20, 540))
+        
     # method for handling user input
     def handle_input(self, event):
         if event.type == pygame.QUIT:
@@ -205,6 +213,8 @@ class Sudoku:
     def update(self):
         #self.handle_input() ==> this is done in the UI system
         # process user input
+        self.display_pos() # display the user's current pos
+        self.draw_box() # updates the position box for the UI
         if self.flag2 == 1:
             if self.solve(0, 0) == False:
                 self.error = 1
