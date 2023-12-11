@@ -22,15 +22,15 @@ class Sudoku:
         self.screen = pygame.display.set_mode((500, 600))
         # init with empty board
         self.grid = [
+		    [7, 0, 0, 0, 0, 0, 0, 0, 0],
+		    [0, 0, 0, 8, 0, 0, 1, 0, 0],
+		    [0, 2, 0, 0, 0, 0, 0, 0, 9],
 		    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+		    [0, 0, 0, 0, 0, 6, 0, 0, 0],
+		    [0, 3, 0, 0, 8, 0, 0, 6, 0],
 		    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-		    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-		    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-		    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-		    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-		    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-		    [0, 0, 0, 0, 0, 0, 0, 0, 0],
-		    [0, 0, 0, 0, 0, 0, 0, 0, 0]
+		    [0, 0, 4, 0, 0, 0, 0, 0, 0],
+		    [0, 0, 0, 0, 0, 0, 0, 5, 0]
 	    ]
     # drawing on the pygame window    
     def draw(self):
@@ -136,17 +136,17 @@ class Sudoku:
         text1 = self.font1.render("not a valid key", 1, (0, 0, 0))
         self.screen.blit(text1, (20, 570))
     # check if a val entered is valid
-    def valid(m, i, j, val):
+    def valid(self, i, j, val):
         for it in range(9):
-            if m[i][it] == val:
+            if self.grid[i][it] == val:
                 return False
-            if m[it][j] == val:
+            if self.grid[it][j] == val:
                 return False
         it = i // 3
         jt = j // 3
         for i in range(it * 3, it * 3 + 3):
             for j in range(jt * 3, jt * 3 + 3):
-                if m[i][j] == val:
+                if self.grid[i][j] == val:
                     return False
         return True
     # method for displaying instructions
@@ -211,7 +211,7 @@ class Sudoku:
             self.handle_input()
             # process user input
             if self.flag2 == 1:
-                if self.solve(self.grid, 0, 0) == False:
+                if self.solve(0, 0) == False:
                     self.error = 1
                 else:
                     self.rs = 1
