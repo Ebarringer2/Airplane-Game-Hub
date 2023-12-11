@@ -17,6 +17,9 @@ class Sudoku:
         self.flag2 = 0
         self.rs = 0
         self.error = 0
+        # for updating the solutions
+        self.solved = False
+        self.solutions = []
 		# init pygame bases
         pygame.font.init()
         self.font1 = pygame.font.SysFont('arial', 18)
@@ -95,6 +98,8 @@ class Sudoku:
                 self.draw_box()
                 pygame.display.update()
                 pygame.time.delay(50)
+        # update for method
+        self.solved = True
         return False
     # method to create the puzle
     def generate_sudoku(self):
@@ -114,6 +119,8 @@ class Sudoku:
             print("Removing digits, adding zeroes")
             row, col = randint(0, 8), randint(0, 8)
             board[row][col] = 0
+        # update for method
+        self.solved = False
         self.grid = board
     # getting cords for the mouse
     def get_cord(self, pos):
@@ -215,6 +222,7 @@ class Sudoku:
         # process user input
         self.display_pos() # display the user's current pos
         self.draw_box() # updates the position box for the UI
+        self.save_solution() # updates the solutions list
         if self.flag2 == 1:
             if self.solve(0, 0) == False:
                 self.error = 1
@@ -238,6 +246,7 @@ class Sudoku:
         self.instruction()
         # update window
         pygame.display.update()
+    # run loop
     def run(self):
         self.running = True
         self.generate_sudoku()
@@ -246,3 +255,10 @@ class Sudoku:
             self.screen.fill((255, 255, 255))
             # update in run loop
             self.update()
+    # save past solutions so that we can save time solving
+    def save_solution(self):
+        if self.solved:
+            self.solutions.append(self.grid)
+            print("saved solution: " + str(self.grid))
+        else:
+            pass
