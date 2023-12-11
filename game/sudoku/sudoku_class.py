@@ -260,5 +260,6 @@ class Sudoku:
         if self.solved:
             self.solutions.append(self.grid)
             print("saved solution: " + str(self.grid))
+            self.solved = False
         else:
             pass
