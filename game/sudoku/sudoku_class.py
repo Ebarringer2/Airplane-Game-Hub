@@ -315,7 +315,7 @@ class Sudoku:
             #for i in unsolved_board:
             #    f.write(str(i))
             # add the colon for parsing the dictionary
-            f.write(' : ')
+            f.write('\n')
             # add the solved board to the dictionary pairing
             for i in solved_board:
                 f.write(str(i))
@@ -342,13 +342,20 @@ class Sudoku:
             iterate through all of the solutions by new line character
             split all of the dictionary pairings by the colon divider
             '''
-            for pairing in dictionary:
+            '''for pairing in dictionary:
                 split = (pairing.split(' : '))
                 print(split)
                 # append the unsolved board to the list
                 unsolved_boards.append(split[0])
                 # grab the solution by avoiding index out of range error
                 reversed_dict = split.reverse()
+                print(reversed_dict)
                 solution = reversed_dict - ' : ' - split[0]
                 print(solution)
-                #print('Solution: ' + str(sol[0]))
+                #print('Solution: ' + str(sol[0]))'''
+            for i in range(0, l - 1):
+                val = dictionary[i]
+                if i % 2 != 0:
+                    print('Solution ' + str(i - 1) + ' ' + str(val))
+                else:
+                    print('Unsolved Board ' + str(i) + ' ' + str(val))
