@@ -12,12 +12,13 @@ class Sudoku:
         self.dif = 500 / 9
         self.val = 0
         # init mutables for the obj
-        self.running = False
+        #self.running = False
         self.flag1 = 0
         self.flag2 = 0
         self.rs = 0
         self.error = 0
         # for updating the solutions
+        self.solved = False
 		# init pygame bases
         pygame.font.init()
         self.font1 = pygame.font.SysFont('arial', 18)
@@ -97,7 +98,19 @@ class Sudoku:
                 pygame.display.update()
                 pygame.time.delay(50)
         # update for method
+        self.save_solution()
+        self.solved = False
         return False
+    # method to check if the grid is solved
+    def check_solved(self):
+        self.solved = True ## assume grid is solved at first
+        for i in range(9):
+            for j in range(9):
+                if self.grid[i][j] == 0:
+                    self.solved = False
+                    break
+        self.save_solution()
+        return self.solved
     # method to create the puzle
     def generate_sudoku(self):
         print("Generating Sudoku")
@@ -116,7 +129,9 @@ class Sudoku:
             print("Removing digits, adding zeroes")
             row, col = randint(0, 8), randint(0, 8)
             board[row][col] = 0
-        # update for method     # set solved back to false for the user
+        # update for method
+        self.grid = board
+        print(self.grid)
     # getting cords for the mouse
     def get_cord(self, pos):
         #global x, y
@@ -164,7 +179,6 @@ class Sudoku:
     def display_pos(self):
         text1 = self.font1.render("Position: " + " x: " + str(self.x) + " y: " + str(self.y), 1, (0, 0, 0))
         self.screen.blit(text1, (20, 540))
-        
     # method for handling user input
     def handle_input(self, event):
         if event.type == pygame.QUIT:
@@ -210,14 +224,13 @@ class Sudoku:
             if event.key == pygame.K_BACKSPACE:
                 self.val = 0
             if event.key == pygame.K_RETURN:
-                print('solving algorithm')
-                self.solved = True 
-                print(self.solved)
+                print('solving puzzle')
                 self.flag2 = 1
     # run method
     def update(self):
         #self.handle_input() ==> this is done in the UI system
         # process user input
+        self.check_solved() # check whether or not the board is solved
         self.display_pos() # display the user's current pos
         self.draw_box() # updates the position box for the UI
         if self.flag2 == 1:
@@ -246,6 +259,7 @@ class Sudoku:
     # run loop
     def run(self):
         self.running = True
+        print(self.running)
         self.generate_sudoku()
         while self.running:
             # white background
@@ -253,12 +267,15 @@ class Sudoku:
             # update in run loop
             self.update()
     # save past solutions so that we can save time solving
-    '''def save_solution(self):
-        if self.solved:
+    def save_solution(self):
+        while self.solved:
             print(self.solved)
             # uppload the solution to solutions.txt
             with open('solutions.txt', 'w') as f:
+                print('Saved current solution to solutions.txt')
                 solution = str(self.grid)
                 f.write(solution + '\n')
+            self.solved = False # once printed, return back to false
+            break
         else:
-            pass'''
+            pass
