@@ -37,7 +37,7 @@ pip install -r requirements.txt
 Shaunik Musukula
 [@shaunikm](https://github.come/shaunikm/)
 
-Elliot Barringer
+Elliott Barringer
 [@Ebarringer2](https://github.com/Ebarringer2/)
 
 ## Version History
