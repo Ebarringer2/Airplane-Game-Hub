@@ -105,7 +105,7 @@ class Client:
         self.conn.close()
 
 class TicTacToeClient(Client):
-    def __init__(self):
+    def __init__(self, tictactoe):
         super().__init__()
         self.board = {
             1 : None,
@@ -118,15 +118,30 @@ class TicTacToeClient(Client):
             8 : None,
             9 : None
         }
+        self.listening = True
+        self.sending = False
+        self.grid = tictactoe
     
     def run_client(self) -> None:
         try:
             while True:
-                # self.send_data(self.board)
-                data = loads(self.conn.recv(1024).decode())
-                print(data)
-                for place, value in data.items():
-                    self.board[place] = value
+                if self.listening:
+                    self.grid.on_turn = False
+                    try:
+                        data = loads(self.conn.recv(1024))
+                        for place, value in data.items():
+                            self.board[place] = value
+                        print(data)
+                        self.listening = False
+                        self.sending = True
+                    except:
+                        data = None
+                if self.do_send():
+                    self.grid.on_turn = True
+                    data = self.board
+                    self.conn.sendall(dumps(data).encode())
+                    self.listening = True
+                    self.sending = False
         except (ConnectionAbortedError, ConnectionRefusedError):
             raise ConnectionAbortedError
             
@@ -149,3 +164,6 @@ class TicTacToeClient(Client):
         """
         for _ in range(9):
             self.board[_+1] = board[_]
+    
+    def do_send(self) -> bool:
+        return self.grid.check_changed() and self.sending

@@ -8,7 +8,9 @@ def click():
 
 pg.init()
 done = False
+pg.display.set_caption("Server")
 screen = pg.display.set_mode((480, 500))
+
 clock = pg.time.Clock()
 grid = game.game.tictactoe.TicTacToe(
     50,
@@ -19,7 +21,7 @@ grid = game.game.tictactoe.TicTacToe(
     onclick=click
 )
 
-server = network.server.TicTacToeServer()
+server = network.server.TicTacToeServer(grid)
 server.start_server()
 
 while not done:
@@ -29,8 +31,10 @@ while not done:
         if event.type == pg.QUIT:
             done = True
     server.read_board(grid.grid_drawings)
+    grid.set_board([i for i in server.board.values()]) 
     grid.draw_grid()
     pg.display.flip()
     clock.tick(60)
 server.close_server()
 pg.quit()
+quit()
