@@ -20,11 +20,12 @@ class Sudoku:
         # for updating the solutions
         self.solved = False
         self.generated = False
+        self.unsolved_board = []
 		# init pygame bases
         pygame.font.init()
         self.font1 = pygame.font.SysFont('arial', 18)
         self.window = window
-        # init with empty board
+        # init with sample board
         self.grid = [
 		    [7, 0, 0, 0, 0, 0, 0, 0, 0],
 		    [0, 0, 0, 8, 0, 0, 1, 0, 0],
@@ -129,8 +130,9 @@ class Sudoku:
             print("Removing digits, adding zeroes")
             row, col = randint(0, 8), randint(0, 8)
             board[row][col] = 0
-        # update for method
+        # update for later method analysis 
         self.grid = board
+        self.unsolved_board = self.grid
         print(self.grid)
         self.generated = True
     # getting cords for the mouse
@@ -271,13 +273,40 @@ class Sudoku:
             # update in run loop
             self.update()
     # save past solutions so that we can save time solving
-    def save_solution(self):
+    def save_solution(self) -> None:
+        '''
+        this method creates a dictionary in the solutions.txt file
+        the dictionary is structured as follows
+
+        <unsolved board as a string> : <solved board as a string>
+        
+        doing this allows the algorithm to read from this text file and 
+        check whether or ot the current board has already been solved, 
+        and if it has, the solution for that board can be fetched
+
+        this allows the algorithm to save computation time. The backtracking
+        solving method can be slow and tedious, so fetching past solutions is 
+        very helpful
+        '''
         # Append the solution to solutions.txt
-        with open('solutions.txt', 'a') as f:
+        # iterate through the unsolved board
+        # and the solved board and add them to the file
+        with open('solutions.txt', 'a+') as f:
+            for i in range(9):
+                for j in range(9):
+                    it_unsolved = self.unsolved_board[i][j]
+                    str_it_unsolved = str(it_unsolved)
+                    it_solved = self.grid[i][j]
+                    str_it_solved = str(it_solved)
+                    f.write(str_it_unsolved + ' : ' + str_it_solved)
+            #f.write('\n') # new line after printing the solution
             print('Saved current solution to solutions.txt')
-            solution = str(self.grid)
-            f.write(solution + '\n')
             # exit
             sys.exit()
             # Set solved back to False after saving
             #self.solved = False
+    # method for scanning the solutions dictionary for saving computation time
+    def check_solutions(self):
+        with open('solutions.txt', 'r') as f:
+            solutions = f.read()
+            
