@@ -292,12 +292,18 @@ class Sudoku:
         # iterate through the unsolved board
         # and the solved board and add them to the file
         with open('solutions.txt', 'a+') as f:
+            # instantiate empty list to represent the unsolved board
+            unsolved_board = []
+            # insantiate empty list to represent the solved board
+            solved_board= []
             for i in range(9):
                 for j in range(9):
                     it_unsolved = self.unsolved_board[i][j]
                     str_it_unsolved = str(it_unsolved)
+                    unsolved_board.append(str_it_unsolved)
                     it_solved = self.grid[i][j]
                     str_it_solved = str(it_solved)
+                    solved_board.append(str_it_solved)
                     f.write(str_it_unsolved + ' : ' + str_it_solved)
             #f.write('\n') # new line after printing the solution
             print('Saved current solution to solutions.txt')
