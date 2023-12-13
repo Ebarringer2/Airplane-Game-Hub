@@ -132,8 +132,15 @@ class Sudoku:
             board[row][col] = 0
         # update for later method analysis 
         self.grid = board
-        self.unsolved_board = self.grid
+        self.unsolved_board = board
         print(self.grid)
+        print('\n')
+        print(self.unsolved_board)
+        with open('./solutions.txt', 'a+') as f:
+            for i in range(9):
+                for j in range(9):
+                    it = str(self.unsolved_board[i][j])
+                    f.write(it)
         self.generated = True
     # getting cords for the mouse
     def get_cord(self, pos):
@@ -304,15 +311,32 @@ class Sudoku:
                     it_solved = self.grid[i][j]
                     str_it_solved = str(it_solved)
                     solved_board.append(str_it_solved)
-                    f.write(str_it_unsolved + ' : ' + str_it_solved)
-            #f.write('\n') # new line after printing the solution
+            # add the unsolved board to the dictionary pairing in the txt file
+            #for i in unsolved_board:
+            #    f.write(str(i))
+            # add the colon for parsing the dictionary
+            f.write(' : ')
+            # add the soled board to the dictionary pairing
+            for i in solved_board:
+                f.write(str(i))
+            #f.write(unsolved_board + ' : ' + solved_board)
+            f.write('\n') # new line after printing the dictionary entry
             print('Saved current solution to solutions.txt')
             # exit
+            self.check_solutions()
             sys.exit()
             # Set solved back to False after saving
             #self.solved = False
     # method for scanning the solutions dictionary for saving computation time
     def check_solutions(self):
         with open('solutions.txt', 'r') as f:
-            solutions = f.read()
-            
+            # get the solutions by reading the txt line by line
+            solutions = f.readlines()
+            l = len(solutions)
+            print('Num solutions: ' + str(l))   # for debugging
+            '''
+            iterate through all of the solutions as lines, checking if the current board
+            is present in the text file
+            '''
+            for i in solutions:
+                print(i + '/n')

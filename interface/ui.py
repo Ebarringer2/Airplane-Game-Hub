@@ -21,7 +21,7 @@ class Page:
             "element" : element,
             "draw": draw_function,
             "type": type,
-            "efs" : event_functions
+            "efs" : event_functions # efs -> event functions
         }
 
     def update_event(self, event):
