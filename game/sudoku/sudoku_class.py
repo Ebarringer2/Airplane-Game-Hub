@@ -18,8 +18,6 @@ class Sudoku:
         self.rs = 0
         self.error = 0
         # for updating the solutions
-        self.solved = False
-        self.solutions = []
 		# init pygame bases
         pygame.font.init()
         self.font1 = pygame.font.SysFont('arial', 18)
@@ -99,7 +97,6 @@ class Sudoku:
                 pygame.display.update()
                 pygame.time.delay(50)
         # update for method
-        self.solved = True
         return False
     # method to create the puzle
     def generate_sudoku(self):
@@ -119,9 +116,7 @@ class Sudoku:
             print("Removing digits, adding zeroes")
             row, col = randint(0, 8), randint(0, 8)
             board[row][col] = 0
-        # update for method
-        self.solved = False
-        self.grid = board
+        # update for method     # set solved back to false for the user
     # getting cords for the mouse
     def get_cord(self, pos):
         #global x, y
@@ -215,6 +210,9 @@ class Sudoku:
             if event.key == pygame.K_BACKSPACE:
                 self.val = 0
             if event.key == pygame.K_RETURN:
+                print('solving algorithm')
+                self.solved = True 
+                print(self.solved)
                 self.flag2 = 1
     # run method
     def update(self):
@@ -222,7 +220,6 @@ class Sudoku:
         # process user input
         self.display_pos() # display the user's current pos
         self.draw_box() # updates the position box for the UI
-        self.save_solution() # updates the solutions list
         if self.flag2 == 1:
             if self.solve(0, 0) == False:
                 self.error = 1
@@ -256,10 +253,12 @@ class Sudoku:
             # update in run loop
             self.update()
     # save past solutions so that we can save time solving
-    def save_solution(self):
+    '''def save_solution(self):
         if self.solved:
-            self.solutions.append(self.grid)
-            print("saved solution: " + str(self.grid))
-            self.solved = False
+            print(self.solved)
+            # uppload the solution to solutions.txt
+            with open('solutions.txt', 'w') as f:
+                solution = str(self.grid)
+                f.write(solution + '\n')
         else:
-            pass
+            pass'''
