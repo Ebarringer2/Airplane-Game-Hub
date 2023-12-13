@@ -19,6 +19,7 @@ class Sudoku:
         self.error = 0
         # for updating the solutions
         self.solved = False
+        self.generated = False
 		# init pygame bases
         pygame.font.init()
         self.font1 = pygame.font.SysFont('arial', 18)
@@ -98,18 +99,17 @@ class Sudoku:
                 pygame.display.update()
                 pygame.time.delay(50)
         # update for method
-        self.save_solution()
+        #self.save_solution()
         self.solved = False
         return False
     # method to check if the grid is solved
     def check_solved(self):
         self.solved = True ## assume grid is solved at first
-        for i in range(9):
-            for j in range(9):
-                if self.grid[i][j] == 0:
-                    self.solved = False
-                    break
-        self.save_solution()
+        if self.generated:  # check if board has been generated to avoid infinite loop
+            for i in range(9):
+                for j in range(9):
+                    if self.grid[i][j] == 0:
+                        self.solved = False
         return self.solved
     # method to create the puzle
     def generate_sudoku(self):
@@ -132,6 +132,7 @@ class Sudoku:
         # update for method
         self.grid = board
         print(self.grid)
+        self.generated = True
     # getting cords for the mouse
     def get_cord(self, pos):
         #global x, y
@@ -230,7 +231,10 @@ class Sudoku:
     def update(self):
         #self.handle_input() ==> this is done in the UI system
         # process user input
-        self.check_solved() # check whether or not the board is solved
+        if self.generated:
+            self.check_solved() # check whether or not the board is solved
+        if self.solved:
+            self.save_solution()
         self.display_pos() # display the user's current pos
         self.draw_box() # updates the position box for the UI
         if self.flag2 == 1:
@@ -268,14 +272,12 @@ class Sudoku:
             self.update()
     # save past solutions so that we can save time solving
     def save_solution(self):
-        while self.solved:
-            print(self.solved)
-            # uppload the solution to solutions.txt
-            with open('solutions.txt', 'w') as f:
-                print('Saved current solution to solutions.txt')
-                solution = str(self.grid)
-                f.write(solution + '\n')
-            self.solved = False # once printed, return back to false
-            break
-        else:
-            pass
+        # Append the solution to solutions.txt
+        with open('solutions.txt', 'a') as f:
+            print('Saved current solution to solutions.txt')
+            solution = str(self.grid)
+            f.write(solution + '\n')
+            # exit
+            sys.exit()
+            # Set solved back to False after saving
+            #self.solved = False
