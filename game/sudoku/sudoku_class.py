@@ -316,7 +316,7 @@ class Sudoku:
             #    f.write(str(i))
             # add the colon for parsing the dictionary
             f.write(' : ')
-            # add the soled board to the dictionary pairing
+            # add the solved board to the dictionary pairing
             for i in solved_board:
                 f.write(str(i))
             #f.write(unsolved_board + ' : ' + solved_board)
@@ -329,14 +329,26 @@ class Sudoku:
             #self.solved = False
     # method for scanning the solutions dictionary for saving computation time
     def check_solutions(self):
+        # initiate empty unsolved board list
+        unsolved_boards = []
+        # initiate empty solutions list
+        sols = []
         with open('solutions.txt', 'r') as f:
             # get the solutions by reading the txt line by line
-            solutions = f.readlines()
-            l = len(solutions)
+            dictionary = f.readlines()
+            l = len(dictionary)
             print('Num solutions: ' + str(l))   # for debugging
             '''
-            iterate through all of the solutions as lines, checking if the current board
-            is present in the text file
+            iterate through all of the solutions by new line character
+            split all of the dictionary pairings by the colon divider
             '''
-            for i in solutions:
-                print(i + '/n')
+            for pairing in dictionary:
+                split = (pairing.split(' : '))
+                print(split)
+                # append the unsolved board to the list
+                unsolved_boards.append(split[0])
+                # grab the solution by avoiding index out of range error
+                reversed_dict = split.reverse()
+                solution = reversed_dict - ' : ' - split[0]
+                print(solution)
+                #print('Solution: ' + str(sol[0]))
