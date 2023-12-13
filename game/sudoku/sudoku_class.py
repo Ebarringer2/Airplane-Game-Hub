@@ -359,3 +359,14 @@ class Sudoku:
                     print('Solution ' + str(i - 1) + ' ' + str(val))
                 else:
                     print('Unsolved Board ' + str(i) + ' ' + str(val))
+                '''
+                now we can scan the past unsolved boards, check
+                if thecurrent board matches any of them,
+                and if they do, we can use the past solution to skip the process of 
+                backtrack algorithm solving, which saves computation time
+                '''
+                # initialize empty board
+                board: List[List] = []
+                # iterate through all of the values in the solution string
+                for char in val:
+                    
