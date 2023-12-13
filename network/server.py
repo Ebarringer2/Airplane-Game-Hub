@@ -129,7 +129,7 @@ class Server:
         self.SERVER.close()
 
 class TicTacToeServer(Server):
-    def __init__(self):
+    def __init__(self, tictactoe):
         super().__init__(max_connections=1)
         self.board = {
             1 : None,
@@ -144,6 +144,9 @@ class TicTacToeServer(Server):
         }
         self.tic = "cross"
         self.clients_connected = False
+        self.listening = False
+        self.sending = True
+        self.grid = tictactoe
     
     def accept_client(self, conn: socket, addr) -> None:
         self.clients_connected = True
@@ -151,11 +154,23 @@ class TicTacToeServer(Server):
             with conn:
                 self.clients_conn += 1
                 while True:
-                    # data = loads(conn.recv(1024))
-                    # for place, value in data.items():
-                    #     self.board[place] = value
-                    data = {"data" : self.board}
-                    conn.sendall(dumps(data).encode())
+                    if self.listening:
+                        self.grid.on_turn = False
+                        try:
+                            data = loads(self.conn.recv(1024))
+                            for place, value in data.items():
+                                self.board[place] = value
+                            print(data)
+                            self.listening = False
+                            self.sending = True
+                        except:
+                            data = None
+                    if self.do_send():
+                        self.grid.on_turn = True
+                        data = self.board
+                        conn.sendall(dumps(data).encode())
+                        self.listening = True
+                        self.sending = False
         except (ConnectionRefusedError, ConnectionAbortedError):
             pass
         self.clients_conn -= 1
@@ -173,3 +188,6 @@ class TicTacToeServer(Server):
         """
         for _ in range(9):
             self.board[_+1] = board[_]
+
+    def do_send(self) -> bool:
+        return self.grid.check_changed() and self.sending

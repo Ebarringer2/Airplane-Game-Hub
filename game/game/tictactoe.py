@@ -39,12 +39,18 @@ class TicTacToe:
         self.winning_line: Union[tuple, None] = None
         self.winning_color = winning_color
         self.on_turn = True
+        self.lock = False
+        self.changed = False
+        self.old_grid = self.grid_drawings
     
     def draw_grid(self) -> None:
         """
         Draw all X's and O's in the grid & draw the grid
         itself to the screen
         """
+        if self.old_grid != self.grid_drawings:
+            self.changed = True
+        self.old_grid = self.grid_drawings
         # draw gridlines
         for column in range(2):
             pg.draw.line(self.window, self.color, (self.pos_x+(column+1)*self.increment, self.pos_y),
@@ -149,3 +155,11 @@ class TicTacToe:
     
     def change_turn(self):
         self.on_turn = not self.on_turn
+    
+    def set_board(self, board: List[Union[None, str]]) -> None:
+        self.grid_drawings = board
+    
+    def check_changed(self) -> bool:
+        c = self.changed
+        self.changed = False
+        return c
