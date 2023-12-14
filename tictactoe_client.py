@@ -1,6 +1,5 @@
 import game.game.tictactoe
 import network.client
-import interface.ui
 import pygame as pg
 
 def click():

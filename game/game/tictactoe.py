@@ -41,16 +41,12 @@ class TicTacToe:
         self.on_turn = True
         self.lock = False
         self.changed = False
-        self.old_grid = self.grid_drawings
     
     def draw_grid(self) -> None:
         """
         Draw all X's and O's in the grid & draw the grid
         itself to the screen
         """
-        if self.old_grid != self.grid_drawings:
-            self.changed = True
-        self.old_grid = self.grid_drawings
         # draw gridlines
         for column in range(2):
             pg.draw.line(self.window, self.color, (self.pos_x+(column+1)*self.increment, self.pos_y),
@@ -94,6 +90,7 @@ class TicTacToe:
                 if self.grid_rects[box].collidepoint(event.pos):
                     if not self.grid_drawings[box]:
                         self.grid_drawings[box] = self.type
+                    self.changed = True
 
                     if self.onclick:
                         try:
