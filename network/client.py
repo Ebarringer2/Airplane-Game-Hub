@@ -162,8 +162,8 @@ class TicTacToeClient(Client):
                             self.grid.grid_drawings[place-1] = value
                         self.grid.on_turn = True
                     
-        except (ConnectionAbortedError, ConnectionRefusedError):
-            raise ConnectionAbortedError
+        except (ConnectionAbortedError, ConnectionRefusedError, KeyboardInterrupt):
+            pass
             
     
     def send_data(self, data : dict) -> None:

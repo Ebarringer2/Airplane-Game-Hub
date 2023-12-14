@@ -168,7 +168,7 @@ class TicTacToeServer(Server):
                             for place, value in self.board.items():
                                 self.grid.grid_drawings[place-1] = value
                             self.grid.on_turn = True
-        except (ConnectionRefusedError, ConnectionAbortedError):
+        except (ConnectionRefusedError, ConnectionAbortedError, KeyboardInterrupt):
             pass
         self.clients_conn -= 1
         self.clients_connected = False
