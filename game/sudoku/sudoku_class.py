@@ -70,8 +70,13 @@ class Sudoku:
         return True
     # solving algorithm using backtracking
     def solve(self, i, j):
-        for i in self.grid:
-            if 0 not in i:
+        while self.grid[i][j] != 0:
+            if i < 8:
+                i += 1
+            elif i == 8 and j < 8:
+                i = 0
+                j += 1
+            elif i == 8 and j == 8:
                 return True
         pygame.event.pump()
         for it in range(1, 10):
@@ -145,7 +150,7 @@ class Sudoku:
         #         print()
         with open('./solutions.txt', 'a+') as f:
             for i in range(9):
-                for j in range(9):
+                for j in range(9): 
                     it = str(self.unsolved_board[i][j])
                     f.write(it)
         self.generated = True
