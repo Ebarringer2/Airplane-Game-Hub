@@ -16,6 +16,7 @@ class Client:
         self._PORT: int = 0
         self.conn: socket.socket = None
         self.running: bool = False
+        self.stop_threads = False
 
     @property
     def HOST(self):
@@ -82,7 +83,7 @@ class Client:
         except (ConnectionAbortedError, OSError):
             pass
     
-    def send_data(self, text: str) -> None:
+    def send_data(self, text: str) -> str:
         """
         Send to server
         
@@ -102,6 +103,7 @@ class Client:
         return self._HOST and self._PORT
     
     def close_client(self) -> None:
+        self.stop_threads = True
         self.conn.close()
 
 class TicTacToeClient(Client):
@@ -124,7 +126,7 @@ class TicTacToeClient(Client):
     
     def run_client(self) -> None:
         try:
-            while True:
+            while True and not self.stop_threads:
                 if self.grid.is_changed():
                     self.grid.on_turn = False
                     for place in range(len(self.grid.grid_drawings)):
