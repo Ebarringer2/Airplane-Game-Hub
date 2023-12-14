@@ -21,6 +21,7 @@ class Sudoku:
         self.solved = False
         self.generated = False
         self.unsolved_board = []
+        self.board_string = ''
 		# init pygame bases
         pygame.font.init()
         self.font1 = pygame.font.SysFont('arial', 18)
@@ -136,6 +137,17 @@ class Sudoku:
         print(self.grid)
         print('\n')
         print(self.unsolved_board)
+        string = ''
+        for i in range(9):
+            for j in range(9):
+                it = self.unsolved_board[i][j]
+                self.board_string += str(it)
+        print('String of unsolved board: ' + self.board_string)
+        # CREATE STRING
+        # for i in range(9):
+        #     for j in range(9):
+        #         self.checker.append(self.unsolved_board[i][j])
+        #         print()
         with open('./solutions.txt', 'a+') as f:
             for i in range(9):
                 for j in range(9):
@@ -365,8 +377,8 @@ class Sudoku:
                 and if they do, we can use the past solution to skip the process of 
                 backtrack algorithm solving, which saves computation time
                 '''
-                # initialize empty board
-                board: List[List] = []
-                # iterate through all of the values in the solution string
-                for char in val:
-                    
+            # define empty string
+            # iterate through all of the values in the solution string
+            if self.board_string == val:
+                print('THIS BOARD HAS EXISTED IN THE PAST')
+            
