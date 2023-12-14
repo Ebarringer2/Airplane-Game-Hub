@@ -48,6 +48,7 @@ class TicTacToe:
         itself to the screen
         """
         # draw gridlines
+        
         for column in range(2):
             pg.draw.line(self.window, self.color, (self.pos_x+(column+1)*self.increment, self.pos_y),
                          (self.pos_x+(column+1)*self.increment, self.pos_y+self.size), self.line_weight)
@@ -73,7 +74,12 @@ class TicTacToe:
                 pg.draw.circle(self.window, self.color, (position.x + self.increment//2,
                                                        position.y + self.increment//2),
                                (self.increment * self.spacing)//2, self.line_weight)
-        
+            
+        winner = self.check_for_winner()
+
+        if winner:
+            self.has_won = True
+            self.winning_line = (self.window, self.winning_color, winner[1], winner[2], self.line_weight*2)
         if self.winning_line:
             pg.draw.line(*self.winning_line)
                 
@@ -97,12 +103,6 @@ class TicTacToe:
                             self.onclick(*self.args, number=box+1)
                         except TypeError:
                             self.onclick(*self.args)
-
-            winner = self.check_for_winner()
-
-            if winner:
-                self.has_won = True
-                self.winning_line = (self.window, self.winning_color, winner[1], winner[2], self.line_weight*2)
 
     def check_for_winner(self) -> Union[str, None]:
         # horizontally check for winner
@@ -156,7 +156,11 @@ class TicTacToe:
     def set_board(self, board: List[Union[None, str]]) -> None:
         self.grid_drawings = board
     
-    def check_changed(self) -> bool:
+    def is_changed(self) -> bool:
         c = self.changed
         self.changed = False
         return c
+    
+    def reset(self) -> None:
+        self.grid_drawings = [None for box in range(9)]
+        self.has_won = False

@@ -31,7 +31,7 @@ while not done:
         if event.type == pg.QUIT:
             done = True
     client.read_board(grid.grid_drawings)
-    print(client.board)
+    # print(client.board)
     grid.set_board([i for i in client.board.values()])
     grid.draw_grid()
     pg.display.flip()

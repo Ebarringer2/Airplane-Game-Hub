@@ -147,6 +147,7 @@ class TicTacToeServer(Server):
         self.listening = False
         self.sending = True
         self.grid = tictactoe
+        self.grid.on_turn = True
     
     def accept_client(self, conn: socket, addr) -> None:
         self.clients_connected = True
@@ -154,23 +155,19 @@ class TicTacToeServer(Server):
             with conn:
                 self.clients_conn += 1
                 while True:
-                    if self.listening:
+                    if self.grid.is_changed():
                         self.grid.on_turn = False
-                        try:
-                            data = loads(self.conn.recv(1024))
+                        self.read_board(self.grid.grid_drawings)
+                        conn.sendall(dumps(self.board).encode())
+                    elif not self.grid.on_turn:
+                        data = conn.recv(1024)
+                        if data:
+                            data = loads(data)
                             for place, value in data.items():
-                                self.board[place] = value
-                            print(data)
-                            self.listening = False
-                            self.sending = True
-                        except:
-                            data = None
-                    if self.do_send():
-                        self.grid.on_turn = True
-                        data = self.board
-                        conn.sendall(dumps(data).encode())
-                        self.listening = True
-                        self.sending = False
+                                self.board[int(place)] = value
+                            for place, value in self.board.items():
+                                self.grid.grid_drawings[place-1] = value
+                            self.grid.on_turn = True
         except (ConnectionRefusedError, ConnectionAbortedError):
             pass
         self.clients_conn -= 1

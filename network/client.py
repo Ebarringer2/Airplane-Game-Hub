@@ -118,11 +118,12 @@ class TicTacToeClient(Client):
             8 : None,
             9 : None
         }
-        self.listening = True
-        self.sending = False
+
         self.grid = tictactoe
+        self.grid.on_turn = False
     
     def run_client(self) -> None:
+        """        
         try:
             while True:
                 if self.listening:
@@ -130,7 +131,7 @@ class TicTacToeClient(Client):
                     try:
                         data = loads(self.conn.recv(1024))
                         for place, value in data.items():
-                            self.board[place] = value
+                            self.board[int(place)] = value
                         print(data)
                         self.listening = False
                         self.sending = True
@@ -142,6 +143,25 @@ class TicTacToeClient(Client):
                     self.conn.sendall(dumps(data).encode())
                     self.listening = True
                     self.sending = False
+        except (ConnectionAbortedError, ConnectionRefusedError):
+            raise ConnectionAbortedError"""
+        try:
+            while True:
+                if self.grid.is_changed():
+                    self.grid.on_turn = False
+                    for place in range(len(self.grid.grid_drawings)):
+                        self.board[place+1] = self.grid.grid_drawings[place]
+                    self.send_data(self.board)
+                elif not self.grid.on_turn:
+                    data = self.conn.recv(1024)
+                    if data:
+                        data = loads(data)
+                        for place, value in data.items():
+                            self.board[int(place)] = value
+                        for place, value in self.board.items():
+                            self.grid.grid_drawings[place-1] = value
+                        self.grid.on_turn = True
+                    
         except (ConnectionAbortedError, ConnectionRefusedError):
             raise ConnectionAbortedError
             
@@ -164,6 +184,3 @@ class TicTacToeClient(Client):
         """
         for _ in range(9):
             self.board[_+1] = board[_]
-    
-    def do_send(self) -> bool:
-        return self.grid.check_changed() and self.sending
