@@ -70,13 +70,8 @@ class Sudoku:
         return True
     # solving algorithm using backtracking
     def solve(self, i, j):
-        while self.grid[i][j] != 0:
-            if i < 8:
-                i += 1
-            elif i == 8 and j < 8:
-                i = 0
-                j += 1
-            elif i == 8 and j == 8:
+        for i in self.grid:
+            if 0 not in i:
                 return True
         pygame.event.pump()
         for it in range(1, 10):
