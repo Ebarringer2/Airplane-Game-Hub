@@ -123,28 +123,6 @@ class TicTacToeClient(Client):
         self.grid.on_turn = False
     
     def run_client(self) -> None:
-        """        
-        try:
-            while True:
-                if self.listening:
-                    self.grid.on_turn = False
-                    try:
-                        data = loads(self.conn.recv(1024))
-                        for place, value in data.items():
-                            self.board[int(place)] = value
-                        print(data)
-                        self.listening = False
-                        self.sending = True
-                    except:
-                        data = None
-                if self.do_send():
-                    self.grid.on_turn = True
-                    data = self.board
-                    self.conn.sendall(dumps(data).encode())
-                    self.listening = True
-                    self.sending = False
-        except (ConnectionAbortedError, ConnectionRefusedError):
-            raise ConnectionAbortedError"""
         try:
             while True:
                 if self.grid.is_changed():
@@ -163,7 +141,7 @@ class TicTacToeClient(Client):
                         self.grid.on_turn = True
                     
         except (ConnectionAbortedError, ConnectionRefusedError, KeyboardInterrupt):
-            pass
+            self.close_client()
             
     
     def send_data(self, data : dict) -> None:

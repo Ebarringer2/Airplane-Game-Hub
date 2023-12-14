@@ -169,7 +169,7 @@ class TicTacToeServer(Server):
                                 self.grid.grid_drawings[place-1] = value
                             self.grid.on_turn = True
         except (ConnectionRefusedError, ConnectionAbortedError, KeyboardInterrupt):
-            pass
+            self.close_server()
         self.clients_conn -= 1
         self.clients_connected = False
     
@@ -185,6 +185,3 @@ class TicTacToeServer(Server):
         """
         for _ in range(9):
             self.board[_+1] = board[_]
-
-    def do_send(self) -> bool:
-        return self.grid.check_changed() and self.sending
