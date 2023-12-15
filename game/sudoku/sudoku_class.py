@@ -402,8 +402,14 @@ class Sudoku:
         self.SUDOKUSOLVER = SudokuSolver()
         while self.running:
             self.screen.fill((255, 255, 255))
-            self.update()
-            pygame.display.update()
+            '''
+            dont display in this run loop so that pygame being incompetent
+            doesn't crash the dancing links algorithm
+            dont update in this run loop so that pygame being incompetent
+            doesn't crash the dancing links algorithm
+            '''
+            #self.update()
+            #pygame.display.update()
             # iterate through events in the pygame cache like the previous run loop
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:

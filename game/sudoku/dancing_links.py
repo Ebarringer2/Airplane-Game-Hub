@@ -237,15 +237,25 @@ class DancingLinks:
     move to the next row and repeat untill all rows are covered
     '''
     def cover(self, column):
+        # update left and right pointers
+        print('updating left and right pointers')
         column.right.left = column.left 
         column.left.right = column.right 
         current_row = column.down 
+        # iterate through all rows in selected column
+        print('iterating over all rows in selected column')
         while current_row != column:
             current_node = current_row.right 
+            # iterate over all nodes in selected row
+            print('iterating over all nodes in selected row')
             while current_node != current_row:
+                # update up and down pointers
+                print('updating up and down pointers')
                 current_node.down.up = current_node.up
                 current_node.up.down = current_node.down 
                 current_node = current_node.right 
+            # move to the next row and repeat
+            print('moving to the next row and repeating')
             current_row = current_row.down 
     '''
     used to reveal a covered column and its connected rows in the 
@@ -290,18 +300,26 @@ class DancingLinks:
         if self.header.right == self.header:
             return True 
         column = self.select_column()
+        # visualize covering process
+        print('covering column')
         self.cover(column)
         current_row = column.down 
         while current_row != column:
+            # visualize solution scanning 
+            print('appending current row value to solutions')
             self.solution.append(current_row.value)
             current_node = current_row.right 
             while current_node != current_row:
                 self.cover(self.header.right)
                 current_node = current_node.right 
             if self.search(k + 1):
+                # found solution at next level
+                print('found solution at level k + 1')
                 return True 
             current_node = current_row.left 
             while current_node != current_row:
+                # uncover header.left 
+                print('uncover header.left')
                 self.uncover(self.header.left)
                 current_node = current_node.left 
             self.solution.pop()
