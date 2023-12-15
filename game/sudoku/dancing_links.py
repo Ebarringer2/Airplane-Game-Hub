@@ -2,7 +2,8 @@
 # the paper is linked in README.md
 import sys
 import pygame
-from random import randint 
+from random import randint
+from game.sudoku.sudoku_class import Sudoku
 # class to represent a node in the dancing links algorithm
 class Node:
     def __init__(self, value=None):
@@ -110,3 +111,16 @@ class DancingLinks:
         self.solution = []
         return self.search(0)
 # application of dancing links class to sudoku
+class SudokuSolver(Sudoku):
+    def __init__(self, sudoku : Sudoku):
+        self.sudoku = Sudoku
+    def extract_solution(self, solution):
+        result = [[0] * 9 for _ in range(9)]
+        for idx in solution:
+            num, i, j = divmod(idx, 81), divmod(idx % 81, 9)
+            result[i][j] = num + 1 
+        return result
+    '''def sudoku_solver_run(self):
+        self.running = True
+        self.sudoku.solver = DancingLinks(self.sudoku.grid)
+        while self.running:'''

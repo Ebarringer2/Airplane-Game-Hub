@@ -2,6 +2,7 @@ import sys
 import pygame
 from random import randint
 from typing import List
+from game.sudoku.dancing_links import SudokuSolver, DancingLinks
 
 class Sudoku:
     def __init__(self, window):
@@ -26,6 +27,10 @@ class Sudoku:
         pygame.font.init()
         self.font1 = pygame.font.SysFont('arial', 18)
         self.window = window
+        # for the dancing links solver
+        self.DANCINGLINKS = None
+        # for the sudoku solver object
+        self.SUDOKUSOLVER = None
         # init with sample board
         self.grid = [
 		    [7, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -381,4 +386,32 @@ class Sudoku:
             # iterate through all of the values in the solution string
             if self.board_string == val:
                 print('THIS BOARD HAS EXISTED IN THE PAST')
-            
+    # method for solving using the dancing links algorithm
+    def solver_run(self):
+        '''
+        this run loop is largely similar to the normal run loop for this class.
+        the main difference is the addition of the dancing links and sudoku solving algorithm
+        written in dancing_links.py to solve the board. Again, the main goal here is to decrease 
+        computation difficult and time, increasing performance, so if this algorithm ends up to be slower
+        on the run device than the previous backtracking algorithm, one is able to use the other run loop
+        defined to still use that algorithm. This addition might just be faster than that backtracking 
+        algorithm, so that is why I am including it
+        '''
+        self.running = True 
+        self.DANCINGLINKS = DancingLinks(self.grid)
+        self.SUDOKUSOLVER = SudokuSolver(self)
+        while self.running:
+            self.screen.fill((255, 255, 255))
+            self.update()
+            pygame.display.update()
+            # iterate through events in the pygame cache like the previous run loop
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    pygame.quit()
+                    sys.exit()
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
+                    print('solving grid using dancing links')
+                    # check if the board is solved
+                    if self.solver.solve():
+                        print('solution found')
+                        self.grid = self.SUDOKUSOLVER.extract_solution(self.DANCINGLINKS.solution)
