@@ -52,4 +52,4 @@ This project is licensed under the MIT License - see the LICENSE.md file for det
 ## Acknowledgments
 
 * [example](example)
-* https://arxiv.org/pdf/cs/0011047.pdf
+* Donald Knuth's brilliant paper on AlgorithmX https://arxiv.org/pdf/cs/0011047.pdf
