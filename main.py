@@ -14,25 +14,36 @@ pg.display.set_caption("Airplane Game Hub")
 
 # easter egg :)
 print("🦖")
-# print(pg.font.get_fonts())
 
 # initialize all screens to be displayed
 home_page = pages.Home(window)
+
 info_select = pages.Info_Select(window)
 info_tic_tac_toe = pages.Info_TicTacToe(window)
 info_sudoku = pages.Info_Sudoku(window)
+
 game_select = pages.GameSelect(window)
 
+tic_tac_toe_room_options = pages.TicTacToeRoomOptions(window)
+tic_tac_toe_room_finder = pages.TicTacToeRoomFinder(window)
+
 # add all pages to page manager
+page_list = [
+    (home_page, "home"),
+    (info_select, "info_select"),
+    (info_tic_tac_toe, "info_tic_tac_toe"),
+    (info_sudoku, "info_sudoku"),
+    (game_select, "game_select"),
+    (tic_tac_toe_room_options, "tic_tac_toe_room_options"),
+    (tic_tac_toe_room_finder, "tic_tac_toe_room_finder")
+]
+
 all_pages = PageGroup()
-all_pages.add(home_page, "home")
-all_pages.add(info_select, "info_select")
-all_pages.add(info_tic_tac_toe, "info_tic_tac_toe")
-all_pages.add(info_sudoku, "info_sudoku")
-all_pages.add(game_select, "game_select")
+for page in page_list:
+    all_pages.add(page[0], page[1])
 
 # select page to be shown on start screen
-all_pages.select_page("home")
+all_pages.select_page("tic_tac_toe_room_finder")
 
 # define all button functions
 def select_game_select_screen(): all_pages.select_page("game_select")
@@ -40,6 +51,8 @@ def select_home_screen(): all_pages.select_page("home")
 def select_info_select_screen(): all_pages.select_page("info_select")
 def select_info_tic_tac_toe_screen(): all_pages.select_page("info_tic_tac_toe")
 def select_info_sudoku_screen(): all_pages.select_page("info_sudoku")
+def select_tic_tac_toe_room_options_screen(): all_pages.select_page("tic_tac_toe_room_options")
+def select_tic_tac_toe_room_finder_screen(): all_pages.select_page("tic_tac_toe_room_finder")
 
 # bind all home button functions
 home_page.play.settings["onclick"] = select_game_select_screen
@@ -58,7 +71,15 @@ info_sudoku.back.settings["onclick"] = select_info_select_screen
 
 # bind all game select button functions
 game_select.back.settings["onclick"] = select_home_screen
+game_select.tictactoe.settings["onclick"] = select_tic_tac_toe_room_options_screen
 
+# bind all tictactoe game options button functions
+tic_tac_toe_room_options.back.settings["onclick"] = select_game_select_screen
+tic_tac_toe_room_options.find_room.settings["onclick"] = select_tic_tac_toe_room_finder_screen
+
+tic_tac_toe_room_finder.back.settings["onclick"] = select_tic_tac_toe_room_options_screen
+
+# main loop
 while not done:
     window.fill((255, 255, 255))
     for event in pg.event.get():

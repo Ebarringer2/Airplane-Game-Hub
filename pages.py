@@ -256,7 +256,7 @@ class GameSelect(interface.ui.Page):
         
         # create text object for this screen
         self.text = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 64))
-        self.text.write(250, 110, "Airplane Game Hub", "title")
+        self.text.write(420, 110, "Games", "title")
         
         self.element_group = [
             (self.sudoku, self.sudoku.draw, "sudoku", "event", [self.sudoku.check_click]),
@@ -267,3 +267,187 @@ class GameSelect(interface.ui.Page):
 
         for element in self.element_group:
             self.add(*element)
+
+class TicTacToeRoomOptions(interface.ui.Page):
+    def __init__(self, window: pg.display):
+        super().__init__()
+        self.window: pg.display = window
+
+        self.host_room = game.utils.input.Button(self.window, {
+            "paddingx" : 41.5,
+            "paddingy" : 17.5,
+            "x_pos" : WIDTH//2-140,
+            "y_pos" : HEIGHT//2-75,
+            "timer" : BUTTON_TIMER,
+            "outline" : True,
+            "button_color" : pg.color.Color((204,204,204)),
+            "clicked_color" : pg.color.Color((160,156,156)),
+            "text_color" : pg.color.Color("black"),
+            "display_text" : "Host Room",
+            "outline_color" : pg.color.Color((160,156,156)),
+            "font" : pg.font.SysFont("calibri", 46)
+            })
+        
+        self.find_room = game.utils.input.Button(self.window, {
+            "paddingx" : 44.5,
+            "paddingy" : 17.5,
+            "x_pos" : WIDTH//2-140,
+            "y_pos" : HEIGHT//2+40,
+            "timer" : BUTTON_TIMER,
+            "outline" : True,
+            "button_color" : pg.color.Color((204,204,204)),
+            "clicked_color" : pg.color.Color((160,156,156)),
+            "text_color" : pg.color.Color("black"),
+            "display_text" : "Find Room",
+            "outline_color" : pg.color.Color((160,156,156)),
+            "font" : pg.font.SysFont("calibri", 46)
+            })
+
+        self.back = game.utils.input.Button(self.window, {
+            "paddingx" : 20,
+            "paddingy" : 12,
+            "x_pos" : 20,
+            "y_pos" : HEIGHT-75,
+            "timer" : BUTTON_TIMER,
+            "outline" : True,
+            "button_color" : pg.color.Color((232,100,100)),
+            "clicked_color" : pg.color.Color((208,4,4)),
+            "text_color" : pg.color.Color("black"),
+            "display_text" : "Back",
+            "outline_color" : pg.color.Color((208,4,4)),
+            "font" : pg.font.SysFont("calibri", 30, bold=True)
+            })
+        
+        # create text object for this screen
+        self.text = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 64))
+        self.text.write(382, 110, "TicTacToe", "title")
+        
+        self.element_group = [
+            (self.host_room, self.host_room.draw, "host_room", "event", [self.host_room.check_click]),
+            (self.find_room, self.find_room.draw, "find_room", "event", [self.find_room.check_click]),
+            (self.back, self.back.draw, "back", "event", [self.back.check_click]),
+            (self.text, self.text.draw, "text_out")
+        ]
+
+        for element in self.element_group:
+            self.add(*element)
+
+class TicTacToeRoomFinder(interface.ui.Page):
+    def __init__(self, window: pg.display):
+        super().__init__()
+        self.window: pg.display = window
+
+        self.enter_key = game.utils.input.Textbox(
+            302, HEIGHT//2-70, pg.font.SysFont("calibri", 30, bold=True),
+            self.window, self.connect_to_host, filler_text="Room Key",
+            size_h=40, size_w=400)
+        
+        self.connect_button = game.utils.input.Button(self.window, {
+            "paddingx" : 20,
+            "paddingy" : 12,
+            "x_pos" : WIDTH//2-89,
+            "y_pos" : HEIGHT//2,
+            "timer" : BUTTON_TIMER,
+            "outline" : True,
+            "button_color" : pg.color.Color((204,204,204)),
+            "clicked_color" : pg.color.Color((160,156,156)),
+            "text_color" : pg.color.Color("black"),
+            "display_text" : "Connect",
+            "outline_color" : pg.color.Color((160,156,156)),
+            "font" : pg.font.SysFont("calibri", 40)
+            })
+
+        self.back = game.utils.input.Button(self.window, {
+            "paddingx" : 20,
+            "paddingy" : 12,
+            "x_pos" : 20,
+            "y_pos" : HEIGHT-75,
+            "timer" : BUTTON_TIMER,
+            "outline" : True,
+            "button_color" : pg.color.Color((232,100,100)),
+            "clicked_color" : pg.color.Color((208,4,4)),
+            "text_color" : pg.color.Color("black"),
+            "display_text" : "Back",
+            "outline_color" : pg.color.Color((208,4,4)),
+            "font" : pg.font.SysFont("calibri", 30, bold=True)
+            })
+        
+        # create text object for this screen
+        self.text = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 64))
+        self.label = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 50))
+        self.text.write(382, 110, "TicTacToe", "title")
+        self.label.write(342, HEIGHT//2-120, "Enter Room Key:", "enter_key")
+        
+        self.element_group = [
+            (self.enter_key, self.enter_key.update_draw, "find_room", "event", [self.enter_key.update_input]),
+            (self.back, self.back.draw, "back", "event", [self.back.check_click]),
+            (self.connect_button, self.connect_button.draw, "connect_button", "event", [self.connect_button.check_click]),
+            (self.text, self.text.draw, "text_out"),
+            (self.label, self.label.draw, "label")
+        ]
+
+        for element in self.element_group:
+            self.add(*element)
+    
+    def connect_to_host(self, text: str):
+        pass
+
+class TicTacToeRoomFinder(interface.ui.Page):
+    def __init__(self, window: pg.display):
+        super().__init__()
+        self.window: pg.display = window
+
+        self.enter_key = game.utils.input.Textbox(
+            302, HEIGHT//2-70, pg.font.SysFont("calibri", 30, bold=True),
+            self.window, self.connect_to_host, filler_text="Room Key",
+            size_h=40, size_w=400)
+        
+        self.connect_button = game.utils.input.Button(self.window, {
+            "paddingx" : 20,
+            "paddingy" : 12,
+            "x_pos" : WIDTH//2-89,
+            "y_pos" : HEIGHT//2,
+            "timer" : BUTTON_TIMER,
+            "outline" : True,
+            "button_color" : pg.color.Color((204,204,204)),
+            "clicked_color" : pg.color.Color((160,156,156)),
+            "text_color" : pg.color.Color("black"),
+            "display_text" : "Connect",
+            "outline_color" : pg.color.Color((160,156,156)),
+            "font" : pg.font.SysFont("calibri", 40)
+            })
+
+        self.back = game.utils.input.Button(self.window, {
+            "paddingx" : 20,
+            "paddingy" : 12,
+            "x_pos" : 20,
+            "y_pos" : HEIGHT-75,
+            "timer" : BUTTON_TIMER,
+            "outline" : True,
+            "button_color" : pg.color.Color((232,100,100)),
+            "clicked_color" : pg.color.Color((208,4,4)),
+            "text_color" : pg.color.Color("black"),
+            "display_text" : "Back",
+            "outline_color" : pg.color.Color((208,4,4)),
+            "font" : pg.font.SysFont("calibri", 30, bold=True)
+            })
+        
+        # create text object for this screen
+        self.text = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 64))
+        self.label = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 50))
+        self.text.write(382, 110, "TicTacToe", "title")
+        self.label.write(342, HEIGHT//2-120, "Enter Room Key:", "enter_key")
+        
+        self.element_group = [
+            (self.enter_key, self.enter_key.update_draw, "find_room", "event", [self.enter_key.update_input]),
+            (self.back, self.back.draw, "back", "event", [self.back.check_click]),
+            (self.connect_button, self.connect_button.draw, "connect_button", "event", [self.connect_button.check_click]),
+            (self.text, self.text.draw, "text_out"),
+            (self.label, self.label.draw, "label")
+        ]
+
+        for element in self.element_group:
+            self.add(*element)
+    
+    def connect_to_host(self, text: str):
+        pass
