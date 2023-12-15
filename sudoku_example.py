@@ -1,3 +1,8 @@
+'''
+IMPORTANT NOTE
+this file is using the backtracking algorithm, not the dancing links and sudoku solver pair
+'''
+
 # import Sudoku object and UI system
 import game.sudoku.sudoku_class
 import interface.ui

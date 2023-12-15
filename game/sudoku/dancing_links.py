@@ -3,7 +3,6 @@
 import sys
 import pygame
 from random import randint
-from game.sudoku.sudoku_class import Sudoku
 # class to represent a node in the dancing links algorithm
 class Node:
     def __init__(self, value=None):
@@ -32,6 +31,11 @@ class DancingLinks:
             for j in range(9):
                 for num in range(1, 10):
                     idx = self.get_index(i, j, num)
+                    # debug print statement
+                    print(f"idx: {idx}, len(columns): {len(columns)}")
+                    # make sure that columns list has enough elements
+                    if idx >= len(columns):
+                        columns.append(Node())
                     row = Node(idx)
                     columns[idx].up.down = row
                     row.up = columns[idx].up
@@ -45,10 +49,10 @@ class DancingLinks:
                         node = Node(idx)
                         prev_row.right = node 
                         node.left = prev_row 
-                        node.up = columns[idx].up 
-                        node.down = columns[idx]
-                        columns[idx].up.down = node 
-                        columns[idx].up = node 
+                        node.up = columns[idx - 1].up 
+                        node.down = columns[idx - 1]
+                        columns[idx - 1].up.down = node 
+                        columns[idx - 1].up = node 
                         prev_row = node 
         return header 
     def get_index(self, i, j, num):
@@ -111,9 +115,9 @@ class DancingLinks:
         self.solution = []
         return self.search(0)
 # application of dancing links class to sudoku
-class SudokuSolver(Sudoku):
-    def __init__(self, sudoku : Sudoku):
-        self.sudoku = Sudoku
+class SudokuSolver():
+    #def __init__(self):
+        #self.sudoku = Sudoku
     def extract_solution(self, solution):
         result = [[0] * 9 for _ in range(9)]
         for idx in solution:
