@@ -23,9 +23,8 @@ grid = game.game.tictactoe.TicTacToe(
 )
 
 server = network.server.TicTacToeServer(grid)
-# server.start_server()
-# print(pg.scrap.get("text/plain;charset=utf-8").decode())
-pg.scrap.put(pg.SCRAP_TEXT, "Hello".encode("utf-8"))
+server.start_server()
+pg.scrap.put(pg.SCRAP_TEXT, server.KEY.encode("utf-8"))
 while not done:
     screen.fill((255, 255, 255))
     for event in pg.event.get():

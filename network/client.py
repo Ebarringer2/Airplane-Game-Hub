@@ -44,9 +44,8 @@ class Client:
             self.running = True
             send = Thread(target=self.run_client, daemon=True)
             send.start()
-        except ConnectionRefusedError:
-            return -1
-        return 0
+        except:
+            raise ConnectionRefusedError
     
     def run_client(self) -> None:
         """
@@ -81,6 +80,7 @@ class Client:
     
     def close_client(self) -> None:
         self.stop_threads = True
+        self.running = False
         self.conn.close()
 
 class TicTacToeClient(Client):
@@ -109,6 +109,7 @@ class TicTacToeClient(Client):
                     for place in range(len(self.grid.grid_drawings)):
                         self.board[place+1] = self.grid.grid_drawings[place]
                     self.send_data(self.board)
+                    self.stop_if_win()
                 elif not self.grid.on_turn:
                     data = self.conn.recv(1024)
                     if data:
@@ -118,6 +119,7 @@ class TicTacToeClient(Client):
                         for place, value in self.board.items():
                             self.grid.grid_drawings[place-1] = value
                         self.grid.on_turn = True
+                        self.stop_if_win()
                     
         except (ConnectionAbortedError, ConnectionRefusedError, KeyboardInterrupt):
             self.close_client()
@@ -141,3 +143,7 @@ class TicTacToeClient(Client):
         """
         for _ in range(9):
             self.board[_+1] = board[_]
+    
+    def stop_if_win(self):
+        if self.grid.has_won:
+            self.close_client()

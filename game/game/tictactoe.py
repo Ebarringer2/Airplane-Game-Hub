@@ -162,5 +162,6 @@ class TicTacToe:
         return c
     
     def reset(self) -> None:
+        self.winning_line = None
         self.grid_drawings = [None for box in range(9)]
         self.has_won = False

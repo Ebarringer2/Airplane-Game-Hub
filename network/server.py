@@ -105,6 +105,8 @@ class Server:
             conn, addr = self.SERVER.accept()
             process = Thread(target=self.accept_client, args=(conn, addr), daemon=True)
             process.start()
+            print(self.clients_conn)
+            print(self.max_conn)
     
     def accept_client(self, conn, addr) -> None:
         """
@@ -153,6 +155,7 @@ class TicTacToeServer(Server):
     
     def accept_client(self, conn: socket, addr) -> None:
         self.clients_connected = True
+        self.grid.reset()
         try:
             with conn:
                 self.clients_conn += 1
@@ -161,6 +164,7 @@ class TicTacToeServer(Server):
                         self.grid.on_turn = False
                         self.read_board(self.grid.grid_drawings)
                         conn.sendall(dumps(self.board).encode())
+                        self.stop_if_win()
                     elif not self.grid.on_turn:
                         data = conn.recv(1024)
                         if data:
@@ -170,6 +174,7 @@ class TicTacToeServer(Server):
                             for place, value in self.board.items():
                                 self.grid.grid_drawings[place-1] = value
                             self.grid.on_turn = True
+                            self.stop_if_win()
         except (ConnectionRefusedError, ConnectionAbortedError, KeyboardInterrupt, ConnectionRefusedError):
             self.close_server()
         self.clients_conn -= 1
@@ -187,3 +192,7 @@ class TicTacToeServer(Server):
         """
         for _ in range(9):
             self.board[_+1] = board[_]
+    
+    def stop_if_win(self):
+        if self.grid.has_won:
+            self.close_server()

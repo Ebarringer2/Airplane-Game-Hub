@@ -347,7 +347,7 @@ class TicTacToeServerPage(interface.ui.Page):
             400
         )
 
-        self.client = network.client.TicTacToeClient(self.grid)
+        self.server = network.server.TicTacToeServer(self.grid)
 
         self.back = game.utils.input.Button(self.window, {
             "paddingx" : 20,
@@ -367,9 +367,12 @@ class TicTacToeServerPage(interface.ui.Page):
         # create text object for this screen
         self.text = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 64))
         self.text.write(382, 110, "TicTacToe", "title")
-        
+
+        self.key = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 20))
+        self.key.write(5, 5, "", "key")
+
         self.element_group = [
-            (self.client, self.update_client_board, "client", "event", [self.grid.check_click]),
+            (self.server, self.update_server_board, "server"),
             (self.grid, self.update_ttt_board, "grid", "event", [self.grid.check_click]),
             (self.back, self.back.draw, "back", "event", [self.back.check_click]),
             (self.text, self.text.draw, "text_out"),
@@ -379,21 +382,18 @@ class TicTacToeServerPage(interface.ui.Page):
             self.add(*element)
     
     def update_ttt_board(self):
-        self.grid.set_board([i for i in self.client.board.values()])
+        self.grid.set_board([i for i in self.server.board.values()])
         self.grid.draw_grid()
     
-    def update_client_board(self):
-        self.client.read_board(self.grid.grid_drawings)
+    def update_server_board(self):
+        self.server.read_board(self.grid.grid_drawings)
     
-    def initialize_client(self, key):
-        try:
-            self.client.decode_client_key(key)
-        except:
-            raise AttributeError
-        self.client.start_client()
+    def create_server(self, key):
+        self.server.create_client_key()
     
     def clean_up(self):
-        self.client.close_client()
+        self.server.close_server()
+        self.grid.reset()
 
 # Home -> Play -> TicTacToe -> Find Room
 class TicTacToeRoomFinder(interface.ui.Page):
@@ -464,10 +464,13 @@ class TicTacToeRoomFinder(interface.ui.Page):
         return self.enter_key.text
 
     def update_error_msg(self):
-        if self.wrong_key:
-            self.error.write(WIDTH//2-110, HEIGHT//2-180, "Invalid Key", "error_msg")
-        else:
-            self.error.clear()
+        try:
+            if self.wrong_key:
+                self.error.write(WIDTH//2-110, HEIGHT//2-180, "Invalid Key", "error_msg")
+            else:
+                self.error.clear()
+        except:
+            pass
 
 # Home -> Play -> TicTacToe -> Find Room -> Connect
 class TicTacToeClientPage(interface.ui.Page):
@@ -505,7 +508,7 @@ class TicTacToeClientPage(interface.ui.Page):
         self.text.write(382, 110, "TicTacToe", "title")
         
         self.element_group = [
-            (self.client, self.update_client_board, "client", "event", [self.grid.check_click]),
+            (self.client, self.update_client_board, "client"),
             (self.grid, self.update_ttt_board, "grid", "event", [self.grid.check_click]),
             (self.back, self.back.draw, "back", "event", [self.back.check_click]),
             (self.text, self.text.draw, "text_out"),
@@ -529,5 +532,6 @@ class TicTacToeClientPage(interface.ui.Page):
         self.client.start_client()
     
     def clean_up(self):
-        self.client.close_client()
+        if self.client.running:
+            self.client.close_client()
         self.grid.reset()
