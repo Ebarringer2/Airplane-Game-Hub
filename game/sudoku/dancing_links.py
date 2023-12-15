@@ -120,7 +120,3 @@ class SudokuSolver(Sudoku):
             num, i, j = divmod(idx, 81), divmod(idx % 81, 9)
             result[i][j] = num + 1 
         return result
-    '''def sudoku_solver_run(self):
-        self.running = True
-        self.sudoku.solver = DancingLinks(self.sudoku.grid)
-        while self.running:'''
