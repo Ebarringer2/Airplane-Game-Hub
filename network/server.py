@@ -20,6 +20,7 @@ class Server:
         self.__SERVER: socket.socket = None
         self.max_conn = max_connections
         self.clients_conn = 0
+        self.stop_threads = False
 
     @property
     def HOST(self):
@@ -38,7 +39,7 @@ class Server:
 
     @PORT.setter
     def PORT(self, PORT: int):
-        if not self.PORT:
+        if not self.__PORT:
             self.__PORT: int = PORT
         else:
             raise AttributeError(f"Attribute already assigned to value")
@@ -74,12 +75,12 @@ class Server:
         Create key for client to connect to server
         """
         sprtr = chr(randint(35, 38))
-        temp = self.HOST.split(".")
+        temp = self.__HOST.split(".")
         sep_host = sample(temp, k=len(temp))
         mess_ip = sprtr.join(part for part in sep_host)
         decoder = sprtr.join(str(sep_host.index(part)) for part in temp)
         del temp, sep_host
-        self.KEY = f"{sprtr}{str(self.PORT)[:len(str(self.PORT))//2]}{sprtr}{mess_ip}{sprtr}{decoder}{sprtr}{str(self.PORT)[len(str(self.PORT))//2:]}{sprtr}"
+        self.KEY = f"{sprtr}{str(self.__PORT)[:len(str(self.__PORT))//2]}{sprtr}{mess_ip}{sprtr}{decoder}{sprtr}{str(self.__PORT)[len(str(self.__PORT))//2:]}{sprtr}"
     
     def start_server(self) -> None:
         """
@@ -87,7 +88,7 @@ class Server:
         """
         self.SERVER = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         register(self.close_server)
-        self.SERVER.bind((self.HOST, self.PORT))
+        self.SERVER.bind((self.__HOST, self.__PORT))
         self.running = True
         if not self.KEY:
             self.create_client_key()
@@ -125,8 +126,9 @@ class Server:
         print(f"Current # of clients connected: {self.clients_conn}")
     
     def close_server(self):
-        print("Closing server")
+        self.stop_threads = True
         self.SERVER.close()
+
 
 class TicTacToeServer(Server):
     def __init__(self, tictactoe):
@@ -154,7 +156,7 @@ class TicTacToeServer(Server):
         try:
             with conn:
                 self.clients_conn += 1
-                while True:
+                while True and not self.stop_threads:
                     if self.grid.is_changed():
                         self.grid.on_turn = False
                         self.read_board(self.grid.grid_drawings)
