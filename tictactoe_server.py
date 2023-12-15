@@ -9,6 +9,8 @@ pg.init()
 done = False
 pg.display.set_caption("Server")
 screen = pg.display.set_mode((480, 500))
+pg.scrap.init()
+pg.scrap.set_mode(pg.SCRAP_CLIPBOARD)
 
 clock = pg.time.Clock()
 grid = game.game.tictactoe.TicTacToe(
@@ -21,8 +23,9 @@ grid = game.game.tictactoe.TicTacToe(
 )
 
 server = network.server.TicTacToeServer(grid)
-server.start_server()
-
+# server.start_server()
+# print(pg.scrap.get("text/plain;charset=utf-8").decode())
+pg.scrap.put(pg.scrap.SCRAP_TEXT, "Test".encode("utf-8"))
 while not done:
     screen.fill((255, 255, 255))
     for event in pg.event.get():
