@@ -399,7 +399,7 @@ class Sudoku:
         '''
         self.running = True 
         self.DANCINGLINKS = DancingLinks(self.grid)
-        self.SUDOKUSOLVER = SudokuSolver(self)
+        self.SUDOKUSOLVER = SudokuSolver()
         while self.running:
             self.screen.fill((255, 255, 255))
             self.update()
@@ -412,6 +412,6 @@ class Sudoku:
                 if event.type == pygame.KEYDOWN and event.key == pygame.K_RETURN:
                     print('solving grid using dancing links')
                     # check if the board is solved
-                    if self.solver.solve():
+                    if self.DANCINGLINKS.solve():
                         print('solution found')
                         self.grid = self.SUDOKUSOLVER.extract_solution(self.DANCINGLINKS.solution)

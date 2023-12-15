@@ -181,13 +181,19 @@ class DancingLinks:
                     prev_row = row 
                     for k in range(1, 10):
                         idx = self.get_index(i, j, k)
+                        # ensure that columns list has enough elements
+                        if idx >= len(columns):
+                            columns.append(Node())
                         node = Node(idx)
                         prev_row.right = node 
                         node.left = prev_row 
-                        node.up = columns[idx - 1].up 
-                        node.down = columns[idx - 1]
-                        columns[idx - 1].up.down = node 
-                        columns[idx - 1].up = node 
+                        # for debugging
+                        print ('len columns for indexing: ' + str(len(columns)))
+                        print('value of idx at indexing: ' + str(idx))
+                        node.up = columns[idx].up 
+                        node.down = columns[idx]
+                        columns[idx].up.down = node 
+                        columns[idx].up = node 
                         prev_row = node 
         return header 
     '''
