@@ -27,6 +27,7 @@ game_select = pages.GameSelect(window)
 tic_tac_toe_room_options = pages.TicTacToeRoomOptions(window)
 tic_tac_toe_room_finder = pages.TicTacToeRoomFinder(window)
 tic_tac_toe_client_screen = pages.TicTacToeClientPage(window)
+tic_tac_toe_server_screen = pages.TicTacToeServerPage(window)
 
 # add all pages to page manager
 page_list = [
@@ -37,7 +38,8 @@ page_list = [
     (game_select, "game_select"),
     (tic_tac_toe_room_options, "tic_tac_toe_room_options"),
     (tic_tac_toe_room_finder, "tic_tac_toe_room_finder"),
-    (tic_tac_toe_client_screen, "tic_tac_toe_client_screen")
+    (tic_tac_toe_client_screen, "tic_tac_toe_client_screen"),
+    (tic_tac_toe_server_screen, "tic_tac_toe_server_screen")
 ]
 
 all_pages = PageGroup()
@@ -68,9 +70,17 @@ def select_tic_tac_toe_client_screen():
         tic_tac_toe_room_finder.wrong_key = True
         tic_tac_toe_room_finder.update_error_msg()
 
+def select_tic_tac_toe_server_screen():
+    tic_tac_toe_server_screen.create_server()
+    all_pages.select_page("tic_tac_toe_server_screen")
+
 def exit_tic_tac_toe_client():
     tic_tac_toe_client_screen.clean_up()
     all_pages.select_page("tic_tac_toe_room_finder")
+
+def exit_tic_tac_toe_server():
+    tic_tac_toe_server_screen.clean_up()
+    all_pages.select_page("tic_tac_toe_room_options")
 
 
 # bind all home button functions
@@ -94,12 +104,15 @@ game_select.tictactoe.settings["onclick"] = select_tic_tac_toe_room_options_scre
 
 # bind all tictactoe game options button functions
 tic_tac_toe_room_options.back.settings["onclick"] = select_game_select_screen
+tic_tac_toe_room_options.host_room.settings["onclick"] = select_tic_tac_toe_server_screen
 tic_tac_toe_room_options.find_room.settings["onclick"] = select_tic_tac_toe_room_finder_screen
 
 tic_tac_toe_room_finder.back.settings["onclick"] = select_tic_tac_toe_room_options_screen
 tic_tac_toe_room_finder.connect_button.settings["onclick"] = select_tic_tac_toe_client_screen
 
 tic_tac_toe_client_screen.back.settings["onclick"] = exit_tic_tac_toe_client
+
+tic_tac_toe_server_screen.back.settings["onclick"] = exit_tic_tac_toe_server
 
 # main loop
 while not done:

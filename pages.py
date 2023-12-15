@@ -343,11 +343,26 @@ class TicTacToeServerPage(interface.ui.Page):
             WIDTH//2-200,
             HEIGHT//2-200,
             self.window,
-            "cross",
+            "circle",
             400
         )
 
         self.server = network.server.TicTacToeServer(self.grid)
+
+        self.copy_button = game.utils.input.Button(self.window, {
+            "paddingx" : 20,
+            "paddingy" : 12,
+            "x_pos" : 20,
+            "y_pos" : 20,
+            "timer" : BUTTON_TIMER,
+            "outline" : True,
+            "button_color" : pg.color.Color((204,204,204)),
+            "clicked_color" : pg.color.Color((160,156,156)),
+            "text_color" : pg.color.Color("black"),
+            "display_text" : "Copy Room Key",
+            "outline_color" : pg.color.Color((160,156,156)),
+            "font" : pg.font.SysFont("calibri", 30, bold=True)
+            })
 
         self.back = game.utils.input.Button(self.window, {
             "paddingx" : 20,
@@ -375,11 +390,14 @@ class TicTacToeServerPage(interface.ui.Page):
             (self.server, self.update_server_board, "server"),
             (self.grid, self.update_ttt_board, "grid", "event", [self.grid.check_click]),
             (self.back, self.back.draw, "back", "event", [self.back.check_click]),
+            (self.copy_button, self.copy_button.draw, "copy_button", "event", [self.copy_button.check_click]),
             (self.text, self.text.draw, "text_out"),
         ]
 
         for element in self.element_group:
             self.add(*element)
+        
+        self.copy_button.settings["onclick"] = self.copy_room_key
     
     def update_ttt_board(self):
         self.grid.set_board([i for i in self.server.board.values()])
@@ -388,12 +406,19 @@ class TicTacToeServerPage(interface.ui.Page):
     def update_server_board(self):
         self.server.read_board(self.grid.grid_drawings)
     
-    def create_server(self, key):
-        self.server.create_client_key()
+    def create_server(self):
+        self.server.start_server()
     
     def clean_up(self):
         self.server.close_server()
         self.grid.reset()
+    
+    def copy_room_key(self):
+        if not pg.scrap.get_init():
+            pg.scrap.init()
+        if self.server.running:
+            pg.scrap.put(pg.SCRAP_TEXT, self.server.KEY.encode("utf-8"))
+
 
 # Home -> Play -> TicTacToe -> Find Room
 class TicTacToeRoomFinder(interface.ui.Page):

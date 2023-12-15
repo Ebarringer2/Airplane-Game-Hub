@@ -28,10 +28,7 @@ class Server:
 
     @HOST.setter
     def HOST(self, HOST: str):
-        if not self.HOST:
-            self.__HOST: str = HOST
-        else:
-            raise AttributeError(f"Attribute already assigned to value")
+        self.__HOST: str = HOST
 
     @property
     def PORT(self):
@@ -39,10 +36,7 @@ class Server:
 
     @PORT.setter
     def PORT(self, PORT: int):
-        if not self.__PORT:
-            self.__PORT: int = PORT
-        else:
-            raise AttributeError(f"Attribute already assigned to value")
+        self.__PORT: int = PORT
     
     @property
     def KEY(self):
@@ -50,10 +44,7 @@ class Server:
     
     @KEY.setter
     def KEY(self, KEY: str):
-        if not self.KEY:
-            self.__KEY: int = KEY
-        else:
-            raise AttributeError(f"Attribute already assigned to value")
+        self.__KEY: int = KEY
     
     @property
     def PASSWORD(self):
@@ -65,10 +56,7 @@ class Server:
 
     @SERVER.setter
     def SERVER(self, SERVER: socket.socket):
-        if not self.SERVER:
-            self.__SERVER: socket.socket = SERVER
-        else:
-            raise AttributeError(f"Attribute already assigned to value")
+        self.__SERVER: socket.socket = SERVER
 
     def create_client_key(self) -> None:
         """
@@ -102,6 +90,7 @@ class Server:
         """
         while self.clients_conn < self.max_conn:
             self.SERVER.listen()
+            print(self.SERVER)
             conn, addr = self.SERVER.accept()
             process = Thread(target=self.accept_client, args=(conn, addr), daemon=True)
             process.start()
