@@ -334,7 +334,7 @@ class TicTacToeRoomOptions(interface.ui.Page):
             self.add(*element)
 
 # Home -> Play -> TicTacToe -> Host Room
-class TicTacToeClientPage(interface.ui.Page):
+class TicTacToeServerPage(interface.ui.Page):
     def __init__(self, window: pg.display):
         super().__init__()
         self.window: pg.display = window
@@ -530,3 +530,4 @@ class TicTacToeClientPage(interface.ui.Page):
     
     def clean_up(self):
         self.client.close_client()
+        self.grid.reset()

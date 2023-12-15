@@ -68,6 +68,10 @@ def select_tic_tac_toe_client_screen():
         tic_tac_toe_room_finder.wrong_key = True
         tic_tac_toe_room_finder.update_error_msg()
 
+def exit_tic_tac_toe_client():
+    tic_tac_toe_client_screen.clean_up()
+    all_pages.select_page("tic_tac_toe_room_finder")
+
 
 # bind all home button functions
 home_page.play.settings["onclick"] = select_game_select_screen
@@ -95,6 +99,7 @@ tic_tac_toe_room_options.find_room.settings["onclick"] = select_tic_tac_toe_room
 tic_tac_toe_room_finder.back.settings["onclick"] = select_tic_tac_toe_room_options_screen
 tic_tac_toe_room_finder.connect_button.settings["onclick"] = select_tic_tac_toe_client_screen
 
+tic_tac_toe_client_screen.back.settings["onclick"] = exit_tic_tac_toe_client
 
 # main loop
 while not done:
