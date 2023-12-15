@@ -17,28 +17,6 @@ class Client:
         self.conn: socket.socket = None
         self.running: bool = False
         self.stop_threads = False
-
-    @property
-    def HOST(self):
-        return self._HOST
-
-    @HOST.setter
-    def HOST(self, HOST):
-        if not self.HOST:
-            self._HOST = HOST
-        else:
-            raise AttributeError(f"Attribute already assigned to value")
-
-    @property
-    def PORT(self):
-        return self._PORT
-
-    @PORT.setter
-    def PORT(self, PORT):
-        if not self.PORT:
-            self._PORT = PORT
-        else:
-            raise AttributeError(f"Attribute already assigned to value")
     
     def decode_client_key(self, text) -> None:
         """
@@ -53,8 +31,7 @@ class Client:
             host_tokens = tokens[:(len(tokens)-1)//2+1]
             self.HOST = ".".join(host_tokens[int(index)] for index in decoder)
         except ValueError:
-            print("Invalid key!")
-        return "test"
+            raise ValueError
     
     def start_client(self) -> int:
         """
@@ -65,7 +42,7 @@ class Client:
             register(self.close_client)
             self.conn.connect((self.HOST, self.PORT))
             self.running = True
-            send = Thread(target=self.run_client)
+            send = Thread(target=self.run_client, daemon=True)
             send.start()
         except ConnectionRefusedError:
             return -1

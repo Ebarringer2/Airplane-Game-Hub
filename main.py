@@ -26,6 +26,7 @@ game_select = pages.GameSelect(window)
 
 tic_tac_toe_room_options = pages.TicTacToeRoomOptions(window)
 tic_tac_toe_room_finder = pages.TicTacToeRoomFinder(window)
+tic_tac_toe_client_screen = pages.TicTacToeClientPage(window)
 
 # add all pages to page manager
 page_list = [
@@ -35,7 +36,8 @@ page_list = [
     (info_sudoku, "info_sudoku"),
     (game_select, "game_select"),
     (tic_tac_toe_room_options, "tic_tac_toe_room_options"),
-    (tic_tac_toe_room_finder, "tic_tac_toe_room_finder")
+    (tic_tac_toe_room_finder, "tic_tac_toe_room_finder"),
+    (tic_tac_toe_client_screen, "tic_tac_toe_client_screen")
 ]
 
 all_pages = PageGroup()
@@ -43,7 +45,7 @@ for page in page_list:
     all_pages.add(page[0], page[1])
 
 # select page to be shown on start screen
-all_pages.select_page("tic_tac_toe_room_finder")
+all_pages.select_page("home")
 
 # define all button functions
 def select_game_select_screen(): all_pages.select_page("game_select")
@@ -52,7 +54,20 @@ def select_info_select_screen(): all_pages.select_page("info_select")
 def select_info_tic_tac_toe_screen(): all_pages.select_page("info_tic_tac_toe")
 def select_info_sudoku_screen(): all_pages.select_page("info_sudoku")
 def select_tic_tac_toe_room_options_screen(): all_pages.select_page("tic_tac_toe_room_options")
-def select_tic_tac_toe_room_finder_screen(): all_pages.select_page("tic_tac_toe_room_finder")
+
+def select_tic_tac_toe_room_finder_screen():
+    tic_tac_toe_room_finder.wrong_key = False
+    tic_tac_toe_room_finder.update_error_msg()
+    all_pages.select_page("tic_tac_toe_room_finder")
+
+def select_tic_tac_toe_client_screen():
+    try:
+        tic_tac_toe_client_screen.initialize_client(tic_tac_toe_room_finder.get_key())
+        all_pages.select_page("tic_tac_toe_client_screen")
+    except:
+        tic_tac_toe_room_finder.wrong_key = True
+        tic_tac_toe_room_finder.update_error_msg()
+
 
 # bind all home button functions
 home_page.play.settings["onclick"] = select_game_select_screen
@@ -78,6 +93,8 @@ tic_tac_toe_room_options.back.settings["onclick"] = select_game_select_screen
 tic_tac_toe_room_options.find_room.settings["onclick"] = select_tic_tac_toe_room_finder_screen
 
 tic_tac_toe_room_finder.back.settings["onclick"] = select_tic_tac_toe_room_options_screen
+tic_tac_toe_room_finder.connect_button.settings["onclick"] = select_tic_tac_toe_client_screen
+
 
 # main loop
 while not done:

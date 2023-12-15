@@ -93,7 +93,7 @@ class Server:
         if not self.KEY:
             self.create_client_key()
         print(f"Started server...\nKEY: {self.KEY}")
-        listen = Thread(target=self.run_server)
+        listen = Thread(target=self.run_server, daemon=True)
         listen.start()
     
     def run_server(self) -> None:
@@ -103,7 +103,7 @@ class Server:
         while self.clients_conn < self.max_conn:
             self.SERVER.listen()
             conn, addr = self.SERVER.accept()
-            process = Thread(target=self.accept_client, args=(conn, addr))
+            process = Thread(target=self.accept_client, args=(conn, addr), daemon=True)
             process.start()
     
     def accept_client(self, conn, addr) -> None:

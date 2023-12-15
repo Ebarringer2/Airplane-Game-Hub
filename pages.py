@@ -1,6 +1,8 @@
 import interface.ui
 import game.utils.input
 import game.utils.output
+import game.game.tictactoe
+import network.client, network.server
 import pygame as pg
 from settings import *
 
@@ -54,7 +56,6 @@ class Home(interface.ui.Page):
         for element in self.element_group:
             self.add(*element)
 
-# displays info
 # Home -> Info
 class Info_Select(interface.ui.Page):
     def __init__(self, window: pg.display):
@@ -120,7 +121,6 @@ class Info_Select(interface.ui.Page):
         for element in self.element_group:
             self.add(*element)
 
-# displays tictactoe page info
 # Home -> Info -> TicTacToe
 class Info_TicTacToe(interface.ui.Page):
     def __init__(self, window: pg.display):
@@ -162,7 +162,6 @@ class Info_TicTacToe(interface.ui.Page):
         for element in self.element_group:
             self.add(*element)
 
-# displays tictactoe page info
 # Home -> Info -> Sudoku
 class Info_Sudoku(interface.ui.Page):
     def __init__(self, window: pg.display):
@@ -203,6 +202,7 @@ class Info_Sudoku(interface.ui.Page):
         for element in self.element_group:
             self.add(*element)
 
+# Home -> Play
 class GameSelect(interface.ui.Page):
     def __init__(self, window: pg.display):
         super().__init__()
@@ -268,6 +268,7 @@ class GameSelect(interface.ui.Page):
         for element in self.element_group:
             self.add(*element)
 
+# Home -> Play -> TicTacToe
 class TicTacToeRoomOptions(interface.ui.Page):
     def __init__(self, window: pg.display):
         super().__init__()
@@ -332,6 +333,69 @@ class TicTacToeRoomOptions(interface.ui.Page):
         for element in self.element_group:
             self.add(*element)
 
+# Home -> Play -> TicTacToe -> Host Room
+class TicTacToeClientPage(interface.ui.Page):
+    def __init__(self, window: pg.display):
+        super().__init__()
+        self.window: pg.display = window
+
+        self.grid = game.game.tictactoe.TicTacToe(
+            WIDTH//2-200,
+            HEIGHT//2-200,
+            self.window,
+            "cross",
+            400
+        )
+
+        self.client = network.client.TicTacToeClient(self.grid)
+
+        self.back = game.utils.input.Button(self.window, {
+            "paddingx" : 20,
+            "paddingy" : 12,
+            "x_pos" : 20,
+            "y_pos" : HEIGHT-75,
+            "timer" : BUTTON_TIMER,
+            "outline" : True,
+            "button_color" : pg.color.Color((232,100,100)),
+            "clicked_color" : pg.color.Color((208,4,4)),
+            "text_color" : pg.color.Color("black"),
+            "display_text" : "Back",
+            "outline_color" : pg.color.Color((208,4,4)),
+            "font" : pg.font.SysFont("calibri", 30, bold=True)
+            })
+        
+        # create text object for this screen
+        self.text = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 64))
+        self.text.write(382, 110, "TicTacToe", "title")
+        
+        self.element_group = [
+            (self.client, self.update_client_board, "client", "event", [self.grid.check_click]),
+            (self.grid, self.update_ttt_board, "grid", "event", [self.grid.check_click]),
+            (self.back, self.back.draw, "back", "event", [self.back.check_click]),
+            (self.text, self.text.draw, "text_out"),
+        ]
+
+        for element in self.element_group:
+            self.add(*element)
+    
+    def update_ttt_board(self):
+        self.grid.set_board([i for i in self.client.board.values()])
+        self.grid.draw_grid()
+    
+    def update_client_board(self):
+        self.client.read_board(self.grid.grid_drawings)
+    
+    def initialize_client(self, key):
+        try:
+            self.client.decode_client_key(key)
+        except:
+            raise AttributeError
+        self.client.start_client()
+    
+    def clean_up(self):
+        self.client.close_client()
+
+# Home -> Play -> TicTacToe -> Find Room
 class TicTacToeRoomFinder(interface.ui.Page):
     def __init__(self, window: pg.display):
         super().__init__()
@@ -339,7 +403,7 @@ class TicTacToeRoomFinder(interface.ui.Page):
 
         self.enter_key = game.utils.input.Textbox(
             302, HEIGHT//2-70, pg.font.SysFont("calibri", 30, bold=True),
-            self.window, self.connect_to_host, filler_text="Room Key",
+            self.window, self.filler_func, filler_text="Room Key",
             size_h=40, size_w=400)
         
         self.connect_button = game.utils.input.Button(self.window, {
@@ -372,13 +436,17 @@ class TicTacToeRoomFinder(interface.ui.Page):
             "font" : pg.font.SysFont("calibri", 30, bold=True)
             })
         
+        self.wrong_key = False
+
         # create text object for this screen
         self.text = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 64))
         self.label = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 50))
+        self.error = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 50), color=pg.color.Color((208,4,4)))
         self.text.write(382, 110, "TicTacToe", "title")
         self.label.write(342, HEIGHT//2-120, "Enter Room Key:", "enter_key")
         
         self.element_group = [
+            (self.error, self.error.draw, "error"),
             (self.enter_key, self.enter_key.update_draw, "find_room", "event", [self.enter_key.update_input]),
             (self.back, self.back.draw, "back", "event", [self.back.check_click]),
             (self.connect_button, self.connect_button.draw, "connect_button", "event", [self.connect_button.check_click]),
@@ -389,33 +457,33 @@ class TicTacToeRoomFinder(interface.ui.Page):
         for element in self.element_group:
             self.add(*element)
     
-    def connect_to_host(self, text: str):
+    def filler_func(self, text: str):
         pass
 
-class TicTacToeRoomFinder(interface.ui.Page):
+    def get_key(self):
+        return self.enter_key.text
+
+    def update_error_msg(self):
+        if self.wrong_key:
+            self.error.write(WIDTH//2-110, HEIGHT//2-180, "Invalid Key", "error_msg")
+        else:
+            self.error.clear()
+
+# Home -> Play -> TicTacToe -> Find Room -> Connect
+class TicTacToeClientPage(interface.ui.Page):
     def __init__(self, window: pg.display):
         super().__init__()
         self.window: pg.display = window
 
-        self.enter_key = game.utils.input.Textbox(
-            302, HEIGHT//2-70, pg.font.SysFont("calibri", 30, bold=True),
-            self.window, self.connect_to_host, filler_text="Room Key",
-            size_h=40, size_w=400)
-        
-        self.connect_button = game.utils.input.Button(self.window, {
-            "paddingx" : 20,
-            "paddingy" : 12,
-            "x_pos" : WIDTH//2-89,
-            "y_pos" : HEIGHT//2,
-            "timer" : BUTTON_TIMER,
-            "outline" : True,
-            "button_color" : pg.color.Color((204,204,204)),
-            "clicked_color" : pg.color.Color((160,156,156)),
-            "text_color" : pg.color.Color("black"),
-            "display_text" : "Connect",
-            "outline_color" : pg.color.Color((160,156,156)),
-            "font" : pg.font.SysFont("calibri", 40)
-            })
+        self.grid = game.game.tictactoe.TicTacToe(
+            WIDTH//2-200,
+            HEIGHT//2-200,
+            self.window,
+            "cross",
+            400
+        )
+
+        self.client = network.client.TicTacToeClient(self.grid)
 
         self.back = game.utils.input.Button(self.window, {
             "paddingx" : 20,
@@ -434,20 +502,31 @@ class TicTacToeRoomFinder(interface.ui.Page):
         
         # create text object for this screen
         self.text = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 64))
-        self.label = game.utils.output.Text(window=self.window, font=pg.font.SysFont("calibri", 50))
         self.text.write(382, 110, "TicTacToe", "title")
-        self.label.write(342, HEIGHT//2-120, "Enter Room Key:", "enter_key")
         
         self.element_group = [
-            (self.enter_key, self.enter_key.update_draw, "find_room", "event", [self.enter_key.update_input]),
+            (self.client, self.update_client_board, "client", "event", [self.grid.check_click]),
+            (self.grid, self.update_ttt_board, "grid", "event", [self.grid.check_click]),
             (self.back, self.back.draw, "back", "event", [self.back.check_click]),
-            (self.connect_button, self.connect_button.draw, "connect_button", "event", [self.connect_button.check_click]),
             (self.text, self.text.draw, "text_out"),
-            (self.label, self.label.draw, "label")
         ]
 
         for element in self.element_group:
             self.add(*element)
     
-    def connect_to_host(self, text: str):
-        pass
+    def update_ttt_board(self):
+        self.grid.set_board([i for i in self.client.board.values()])
+        self.grid.draw_grid()
+    
+    def update_client_board(self):
+        self.client.read_board(self.grid.grid_drawings)
+    
+    def initialize_client(self, key):
+        try:
+            self.client.decode_client_key(key)
+        except:
+            raise AttributeError
+        self.client.start_client()
+    
+    def clean_up(self):
+        self.client.close_client()
