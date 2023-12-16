@@ -1,15 +1,21 @@
 # this file uses the dancing links and sudoku solving algorithms to solve the board
 
 # import the needed classes
+from game.sudoku.sudoku_class import Sudoku
 import game.sudoku.sudoku_class 
 import interface.ui
 import pygame as pg 
+import threading
 # instantiate the object 
 pg.init()
 # create the window 
 window = pg.display.set_mode((500, 600)) 
 sudoku = game.sudoku.sudoku_class.Sudoku(window) 
-sudoku.generate_sudoku()
+# use threading for the run loop
+'''def sudoku_solver(sudoku : Sudoku):
+    sudoku.solver_run() 
+solver_thread = threading.Thread(target=sudoku_solver, args=(sudoku,))
+solver_thread.start()'''
 # use the dancing links solver specifically 
 sudoku.solver_run() 
 # instantiate the page 

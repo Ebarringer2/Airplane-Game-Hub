@@ -3,6 +3,7 @@ import pygame
 from random import randint
 from typing import List
 from game.sudoku.dancing_links import SudokuSolver, DancingLinks
+import threading 
 
 class Sudoku:
     def __init__(self, window):
@@ -286,11 +287,25 @@ class Sudoku:
         self.instruction()
         # update window
         pygame.display.update()
+    # threaded method
+    def solve_puzzle_thread(self):
+        if self.generated:
+            self.check_solved()
+        if self.solved:
+            self.save_solution()
+        if self.flag2 == 1:
+            if self.solve(0, 0) == False:
+                self.error = 1
+            else:
+                self.rs = 1
     # run loop
     def run(self):
         self.running = True
         print(self.running)
         self.generate_sudoku()
+        # create a thread for solving the puzzle
+        solve_thread = threading.Thread(target=self.solve_puzzle_thread)
+        solve_thread.start()
         while self.running:
             # white background
             self.screen.fill((255, 255, 255))
@@ -412,6 +427,10 @@ class Sudoku:
             #pygame.display.update()
             # iterate through events in the pygame cache like the previous run loop
             for event in pygame.event.get():
+                # exit method
+                if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
+                    print('terminating program')
+                    sys.exit('terminated')
                 if event.type == pygame.QUIT:
                     pygame.quit()
                     sys.exit()

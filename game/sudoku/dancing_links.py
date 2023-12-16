@@ -250,9 +250,11 @@ class DancingLinks:
             print('iterating over all nodes in selected row')
             while current_node != current_row:
                 # update up and down pointers
-                print('updating up and down pointers')
+                print('current_node.down.up = current_node.up')
                 current_node.down.up = current_node.up
-                current_node.up.down = current_node.down 
+                print('current_node.up.down = current_node.down')
+                current_node.up.down = current_node.down  
+                print('current_node = current_node.right')
                 current_node = current_node.right 
             # move to the next row and repeat
             print('moving to the next row and repeating')
