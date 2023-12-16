@@ -226,6 +226,12 @@ class DancingLinks:
             current = current.right 
         return selected_column 
     '''
+    just a simple method to update the threading log for the algorithm
+    '''
+    def update_log(self, text : str):
+        with open('DL_LOG.txt', 'a+') as f:
+            f.write(text + '\n')
+    '''
     used to hide a column and all of the rows connected to it in the 
     linked matrix
 
@@ -238,25 +244,30 @@ class DancingLinks:
     '''
     def cover(self, column):
         # update left and right pointers
+        self.update_log('updating left and right pointers')
         print('updating left and right pointers')
         column.right.left = column.left 
         column.left.right = column.right 
         current_row = column.down 
         # iterate through all rows in selected column
-        print('iterating over all rows in selected column')
         while current_row != column:
             current_node = current_row.right 
             # iterate over all nodes in selected row
+            self.update_log('iterating over al nodes in selected row')
             print('iterating over all nodes in selected row')
             while current_node != current_row:
                 # update up and down pointers
+                self.update_log('setting current_node.down.up = current_node.up')
                 print('current_node.down.up = current_node.up')
                 current_node.down.up = current_node.up
+                self.update_log('setting current_node.up.down = current_node.down')
                 print('current_node.up.down = current_node.down')
                 current_node.up.down = current_node.down  
+                self.update_log('setting current_node = current_node.right')
                 print('current_node = current_node.right')
                 current_node = current_node.right 
             # move to the next row and repeat
+            self.update_log('moving to the next row and repeating')
             print('moving to the next row and repeating')
             current_row = current_row.down 
     '''
