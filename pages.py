@@ -542,6 +542,7 @@ class TicTacToeClientPage(interface.ui.Page):
         for element in self.element_group:
             self.add(*element)
     
+<<<<<<< Updated upstream
     def update_ttt_board(self):
         self.grid.set_board([i for i in self.client.board.values()])
         self.grid.draw_grid()
@@ -560,3 +561,8 @@ class TicTacToeClientPage(interface.ui.Page):
         if self.client.running:
             self.client.close_client()
         self.grid.reset()
+=======
+    def connect_to_host(self, text: str):
+        pass
+
+>>>>>>> Stashed changes

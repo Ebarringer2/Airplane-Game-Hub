@@ -13,7 +13,7 @@ introduce a doubly linked list for each column, representing the column header. 
 headers are interconnected to form a circular doubly linked list 
 
 Each 1 in the matrix is represented by a node, belonging to both a row-linked list 
-and a column-linked list. these nodes for a toroidal structure 
+and a column-linked list. these nodes form a toroidal structure 
 
 # Dancing links structure 
 
@@ -284,7 +284,7 @@ class DancingLinks:
         column.left.right = column 
     '''
     core recursive backtracking algorithm that implements dancing links
-    attempts to find a solutuon for the sudoku puzzle
+    attempts to find a solution for the sudoku puzzle
 
     EXPLANATION
     if all columns are covered, meaning that a solution is found, return True 
