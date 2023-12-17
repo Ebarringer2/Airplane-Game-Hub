@@ -18,9 +18,10 @@ def to_categorical(y, num_classes=None, dtype='float32'):
     categorical[np.arange(n), y] = 1
     return categorical
 
-class SudokuML:
-    def __init__(self):
+class SML:
+    def __init__(self, initial_grid : list[list[int]]):
         self.model = self.build_model() 
+        self.initial_grid = initial_grid
     def build_model(self):
         model = Sequential([
             Flatten(input_shape=(81,)),
@@ -35,7 +36,16 @@ class SudokuML:
     def generate(self):
         sudoku_grid = np.zeros((9, 9), dtype=int)
         for i in range(9):
-            
+            for j in range(9):
+                sudoku_grid[i, j] = self.initial_grid[i][j] 
+        while True:
+            flat_grid = sudoku_grid.flatten()
+            predictions = self.model.predict(flat_grid.reshape(1, -1))
+            predicted_values = np.argmax(predictions, axis=-1).reshape((9, 9))
+            sudoku_grid[predicted_values == 1] = flat_grid[predicted_values == 1]
+            if np.all(sudoku_grid != 0):
+                break 
+        return sudoku_grid
     def solve(self, puzzle_str):
         puzzle = np.array([int(char) for char in puzzle_str])
         puzzle_flat = puzzle.reshape(1, 81)
