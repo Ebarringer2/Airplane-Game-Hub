@@ -33,8 +33,9 @@ class SudokuML:
     def train(self, X_train, y_train, epochs):
         self.model.fit(X_train, y_train, epochs, batch_size=32) 
     def generate(self):
-        #TODO: implement sudoku puzzle generation
-        pass 
+        sudoku_grid = np.zeros((9, 9), dtype=int)
+        for i in range(9):
+            
     def solve(self, puzzle_str):
         puzzle = np.array([int(char) for char in puzzle_str])
         puzzle_flat = puzzle.reshape(1, 81)
