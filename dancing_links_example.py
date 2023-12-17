@@ -11,13 +11,16 @@ pg.init()
 # create the window 
 window = pg.display.set_mode((500, 600)) 
 sudoku = game.sudoku.sudoku_class.Sudoku(window) 
+# generate sudoku puzzle
+sudoku.generate_sudoku()
 # use threading for the run loop
 '''def sudoku_solver(sudoku : Sudoku):
     sudoku.solver_run() 
 solver_thread = threading.Thread(target=sudoku_solver, args=(sudoku,))
 solver_thread.start()'''
 # use the dancing links solver specifically 
-sudoku.solver_run() 
+#sudoku.solver_run() 
+sudoku.running = True
 # instantiate the page 
 page = interface.ui.Page()
 # 'add something idk'
