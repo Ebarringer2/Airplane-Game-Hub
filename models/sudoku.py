@@ -29,7 +29,7 @@ class SML:
             Dense(81, activation='softmax'),
             Reshape((9, 9))
         ]) 
-        model.compile(optimizer=adam_v2, loss=SparseCategoricalCrossentropy, metrics=['accuracy'])
+        model.compile(optimizer=adam_v2.Adam(), loss=SparseCategoricalCrossentropy, metrics=['accuracy'])
         return model 
     def train(self, X_train, y_train, epochs):
         self.model.fit(X_train, y_train, epochs, batch_size=32) 
