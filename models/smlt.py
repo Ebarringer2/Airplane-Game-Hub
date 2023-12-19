@@ -27,6 +27,7 @@ class SMLT():
             print(f'Epoch {epoch}: training')
             self.training = True 
             self.SML.train(train_data)
+            print(f'Epoch {epoch} result: ')
     def fetch(self):
         with open(self.data_file, 'r') as df:
             data = df.readlines()

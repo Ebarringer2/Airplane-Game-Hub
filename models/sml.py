@@ -27,9 +27,10 @@ class SML:
         self.raw_data : list[tuple[str]] = [
             ()
         ]
-        self.processed_data : list[tuple[str]] = {
+        self.processed_data : list[tuple[str]] = [
             ()
-        }
+        ]
+        self.solution : str = None
     def build_model(self):
         model = Sequential([
             Flatten(input_shape=(81,)),
@@ -59,11 +60,10 @@ class SML:
         puzzle_flat = puzzle.reshape(1, 81)
         predictions = self.model.predict(puzzle_flat)
         solution = np.argmax(predictions, axis=-1)
-        return solution.reshape((9, 9))
+        self.solution = solution.reshape((9, 9))
     def preprocess_data(self):
         X_train = []
         y_train = []
-
         for sudoku_str, solution_str, in self.raw_data:
             # convert strings to numpy arrays
             sudoku_grid = np.array([int(char) for char in sudoku_str])
