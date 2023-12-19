@@ -22,6 +22,9 @@ class SML:
     def __init__(self, initial_grid : list[list[int]]):
         self.model = self.build_model() 
         self.initial_grid = initial_grid
+        self.raw_data = [
+            ()
+        ]
     def build_model(self):
         model = Sequential([
             Flatten(input_shape=(81,)),
