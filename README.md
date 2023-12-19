@@ -12,6 +12,10 @@ This project is a hub of games typically found during those long airplane rides 
 * Python 3.12.0 64-bit
 * All module requires located in `requirements.txt`
 
+### ML Model
+
+Tensorflow framework is implemented in this project in python vers 3.10.0, and this is the only version that will work with this code. Switching to Python 3.10.0 doesn't affect the functionality of other aspects of the program.
+
 ### Installing
 
 * Go to the base GitHub [directory](https://github.com/Ebarringer2/Airplane-Game-Hub)
