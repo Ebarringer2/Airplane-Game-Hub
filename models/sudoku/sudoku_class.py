@@ -46,6 +46,8 @@ class Sudoku:
 		    [0, 0, 4, 0, 0, 0, 0, 0, 0],
 		    [0, 0, 0, 0, 0, 0, 0, 5, 0]
 	    ]
+        # for machine learning
+        self.training = False
     # drawing on the pygame window    
     def draw(self):
         for i in range (9):
@@ -442,3 +444,10 @@ class Sudoku:
                     if self.DANCINGLINKS.solve():
                         print('solution found')
                         self.grid = self.SUDOKUSOLVER.extract_solution(self.DANCINGLINKS.solution)
+    '''
+    method specifically for training the machine 
+    learning aglorithm
+    '''
+    def train(self):
+        self.generate_sudoku()
+        self.save_solution()

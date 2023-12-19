@@ -12,14 +12,21 @@ class SMLT():
         self.data_file = data_file
         self.SML = sml
         self.raw_data : list[tuple[str]] = []
-    def run(self):
+    def run(self, epochs : int):
         self.running = True 
-        self.SML.sudoku.generate_sudoku()
-        self.fetch()
-        self.SML.raw_data = self.raw_data
-        train_data = self.SML.preprocess_data()
-        self.training = True 
-        self.SML.train(train_data)
+        print("Running: " + self.running)
+        for epoch in epochs:
+            print(f'Epoch {epoch}: generating raw data: sudoku grid')
+            self.SML.sudoku.generate_sudoku()
+            print(f'Epoch {epoch}: fetching data from text file')
+            self.fetch()
+            print(f'Epoch {epoch}: updating raw data')
+            self.SML.raw_data = self.raw_data
+            print(f'Epoch {epoch}: Preprocessing data')
+            train_data = self.SML.preprocess_data()
+            print(f'Epoch {epoch}: training')
+            self.training = True 
+            self.SML.train(train_data)
     def fetch(self):
         with open(self.data_file, 'r') as df:
             data = df.readlines()
