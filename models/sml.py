@@ -1,4 +1,5 @@
 import numpy as np 
+from models.sudoku.sudoku_class import Sudoku
 from tensorflow.python.keras.models import Sequential 
 from tensorflow.python.keras.layers import Dense, Flatten, Reshape 
 from tensorflow.python.keras.optimizers import adam_v2
@@ -19,12 +20,16 @@ def to_categorical(y, num_classes=None, dtype='float32'):
     return categorical
 
 class SML:
-    def __init__(self, initial_grid : list[list[int]]):
+    def __init__(self, sudoku : Sudoku):
         self.model = self.build_model() 
-        self.initial_grid = initial_grid
-        self.raw_data = [
+        self.sudoku = sudoku
+        self.initial_grid = sudoku.unsolved_board
+        self.raw_data : list[tuple[str]] = [
             ()
         ]
+        self.processed_data : list[tuple[str]] = {
+            ()
+        }
     def build_model(self):
         model = Sequential([
             Flatten(input_shape=(81,)),
@@ -56,15 +61,10 @@ class SML:
         solution = np.argmax(predictions, axis=-1)
         return solution.reshape((9, 9))
     def preprocess_data(self):
-        raw_data = [
-            ('700000000000800100020000000000000000000006000030000060000000000004000000000000000', "795631482643829157128745369217984635586316974934257816362198547479563218851472693")
-            # add more training examples
-        ]
-
         X_train = []
         y_train = []
 
-        for sudoku_str, solution_str, in raw_data:
+        for sudoku_str, solution_str, in self.raw_data:
             # convert strings to numpy arrays
             sudoku_grid = np.array([int(char) for char in sudoku_str])
             solution_grid = np.array([int(char) for char in solution_str])

@@ -2,7 +2,7 @@
 
 # import necessary modules
 import game.sudoku.sudoku_class
-from models.sudoku import SML
+from models.sml import SML
 import pygame as pg 
 # instantiate the objects
 pg.init()
