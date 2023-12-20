@@ -51,6 +51,7 @@ class Sudoku:
         self.RAW_DATA : list[tuple[str, str]] = []
         self.list_unsolved_strs : list[str] = []
         self.list_solved_strs : list[str] = []
+        self.train_generated = False
     # drawing on the pygame window    
     def draw(self):
         for i in range (9):
@@ -462,7 +463,7 @@ class Sudoku:
     '''
     def train_generate(self, iterations : int):
         print('generating train data')
-        for i in range(1, iterations):
+        for i in range(iterations):
             unsolved_string = ''
             solved_string = ''
             # empty 9x9 grid
@@ -487,16 +488,17 @@ class Sudoku:
                 for j in range(9):
                     iterator = str(board[i][j])
                     unsolved_string += iterator
-            with open('./models/X_train.txt', 'a+') as f:
+            '''with open('./models/X_train.txt', 'a+') as f:
                 f.write(unsolved_string)
                 f.write('\n')
+                print(unsolved_string)
                 print('wrote generated board to X_train.txt')
             self.list_unsolved_strs.append(unsolved_string)
             with open('./models/y_train.txt', 'a+') as f:
                 f.write(solved_string)
                 f.write('\n')
-                print('wrote solved board to y_train.txt')
-
+                print('wrote solved board to y_train.txt')'''
+        self.train_generated = True
     def train_solve(self, i : int, j : int, board : list[list[int]]) -> list[list[int]]:
         while board[i][j] != 0:
             if i < 8:
@@ -534,10 +536,12 @@ class Sudoku:
     # another method for generating X train data
     def generate_raw_data(self, iterations : int):
         for _ in range(iterations):
-            self.generate_sudoku()
-            self.save_to_file('./models/X_train.txt', self.unsolved_board)
-            if self.solved:
-                self.save_to_file('./models/y_train.txt', self.grid)
+            self.train_generate(1)
+            if self.train_generated:
+                print('self.train_generated : ' + str(self.train_generated))
+                self.save_to_file('./models/X_train.txt', self.unsolved_board)
+                if self.solved:
+                    self.save_to_file('./models/y_train.txt', self.grid)
     # method for writing to file
     def save_to_file(self, path : str, board : list[list[int]]):
         board_string = ''
