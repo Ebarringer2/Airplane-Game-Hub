@@ -23,9 +23,9 @@ class SMLT():
         print("Running: " + str(self.running))
         for epoch in range(1, epochs):
             print(f'Epoch {epoch}: generating raw data: sudoku grid')
-            self.SML.sudoku.train_generate(iterations=g_iterations)
+            self.sudoku.train_generate(iterations=g_iterations)
             print(f'Epoch {epoch}: formatting unsolved and solved grid to tuple')
-            self.SML.sudoku.process_raw_data()
+            self.sudoku.process_raw_data()
             self.raw_data = self.SML.sudoku.RAW_DATA
             print(f'Epoch {epoch}: updating raw data')
             self.SML.raw_data = self.raw_data
