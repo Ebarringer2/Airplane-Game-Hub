@@ -16,4 +16,4 @@ sml = SML(sudoku=sudoku)
 # instantiate the SMLT with the training data file path and the sml object
 smlt = SMLT(data_file='./solutions.txt', sml=sml)
 # start the training loop
-smlt.run(epochs=32)
+smlt.run(epochs=32, g_iterations=50)

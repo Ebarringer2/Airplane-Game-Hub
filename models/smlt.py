@@ -1,5 +1,4 @@
 # training for the ml algorithm
-from models.sudoku.sudoku_class import Sudoku 
 from models.sml import SML
 class SMLT():
     def __init__(self, data_file : str, sml : SML):
@@ -12,15 +11,22 @@ class SMLT():
         self.data_file = data_file
         self.SML = sml
         self.sudoku = self.SML.sudoku
-        self.raw_data : list[tuple[str]] = []
-    def run(self, epochs : int):
+        self.raw_data : list[tuple[str, str]] = []
+    def run(self, epochs : int, g_iterations : int):
+        '''
+        *Args
+            *epochs --> number of training loops
+            *g_iterations --> amount of training data, number of times that the 
+            sudoku instance generates and solves a sudoku board
+        '''
         self.running = True 
         print("Running: " + str(self.running))
         for epoch in range(1, epochs):
             print(f'Epoch {epoch}: generating raw data: sudoku grid')
-            self.SML.sudoku.generate_sudoku()
-            print(f'Epoch {epoch}: fetching data from text file')
-            self.fetch()
+            self.SML.sudoku.train_generate(iterations=g_iterations)
+            print(f'Epoch {epoch}: formatting unsolved and solved grid to tuple')
+            self.SML.sudoku.process_raw_data()
+            self.raw_data = self.SML.sudoku.RAW_DATA
             print(f'Epoch {epoch}: updating raw data')
             self.SML.raw_data = self.raw_data
             print(f'Epoch {epoch} raw data: {self.SML.raw_data}')
@@ -30,6 +36,13 @@ class SMLT():
             self.training = True 
             self.SML.train(train_data)
             print(f'Epoch {epoch} result: ')
+    '''
+    method for fetching raw data from the text file **NOT PREPROCESSED
+    formats the data from the .txt file into a tuple readable by the SML
+    updates self.raw_data to the data pulled from the text file
+    not necessary --> alternative is to fetch the raw data directly from the sudoku
+    instance, but it can be handy sometimes
+    '''
     def fetch(self):
         with open(self.data_file, 'r') as df:
             data = df.readlines()

@@ -48,6 +48,9 @@ class Sudoku:
 	    ]
         # for machine learning
         self.training = False
+        self.RAW_DATA : list[tuple[str, str]] = []
+        self.list_unsolved_strs : list[str] = []
+        self.list_solved_strs : list[str] = []
     # drawing on the pygame window    
     def draw(self):
         for i in range (9):
@@ -475,6 +478,8 @@ class Sudoku:
             with open('./models/training_data.txt', 'a+') as f:
                 f.write(unsolved_string)
                 print('wrote generated board to training_data.txt')
+            self.list_unsolved_strs.append(unsolved_string)
+
     def train_solve(self, i : int, j : int, board : list[list[int]]) -> bool:
         solved_string = ''
         while board[i][j] != 0:
@@ -499,4 +504,12 @@ class Sudoku:
         with open('./models/training_data.txt', 'a+') as f:
             f.write(solved_string)
             print('wrote solved board to training_data.txt')
-        
+        self.list_solved_strs.append(solved_string)
+    '''
+    method to format the raw data into a data structure that the SML and 
+    SMLT can proprocess
+    '''
+    def process_raw_data(self):
+        for unsolved, solved in self.list_unsolved_strs, self.list_solved_strs:
+            t : tuple = (unsolved, solved)
+            self.RAW_DATA.append(t)
