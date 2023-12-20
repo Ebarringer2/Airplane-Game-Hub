@@ -461,13 +461,22 @@ class Sudoku:
         print('generating train data')
         for i in range(1, iterations):
             unsolved_string = ''
+            solved_string = ''
             board = [[0 for _ in range(9)] for _ in range(9)]
             for i in range(9):
                 for j in range(9):
                     board[i][j] = self.grid[i][j]
             for i in range(9):
                 for j in range(9):
-                    self.train_solve(i, j, board)
+                    solved_board = self.train_solve(i, j, board)
+            for i in range(9):
+                for j in range(9):
+                    board[i][j] = solved_board[i][j]
+            for n in range(9):
+                for k in range(9):
+                    it = str(board[n][k])
+                    solved_string += it
+                    print(solved_string) 
             for _ in range(randint(10, 20)):
                 row, col = randint(0, 8), randint(0, 8)
                 board[row][col] = 0
@@ -475,13 +484,17 @@ class Sudoku:
                 for j in range(9):
                     iterator = str(board[i][j])
                     unsolved_string += iterator
-            with open('./models/training_data.txt', 'a+') as f:
+            with open('./models/X_train.txt', 'a+') as f:
                 f.write(unsolved_string)
-                print('wrote generated board to training_data.txt')
+                f.write('\n')
+                print('wrote generated board to X_train.txt')
             self.list_unsolved_strs.append(unsolved_string)
+            with open('./models/y_train.txt', 'a+') as f:
+                f.write(solved_string)
+                f.write('\n')
+                print('wrote solved board to y_train.txt')
 
-    def train_solve(self, i : int, j : int, board : list[list[int]]) -> bool:
-        solved_string = ''
+    def train_solve(self, i : int, j : int, board : list[list[int]]) -> list[list[int]]:
         while board[i][j] != 0:
             if i < 8:
                 i += 1
@@ -489,27 +502,29 @@ class Sudoku:
                 i = 0
                 j += 1
             elif i == 8 and j == 8:
-                return True 
+                return board
         for it in range(1, 10):
             if self.is_valid(i, j, it):
                 board[i][j] = it
-                if self.train_solve(i, j):
-                    return True 
+                if self.train_solve(i, j, board) == board:
+                    return board 
                 else:
                     board[i][j] = 0
-        for i in range(9):
+        '''for i in range(9):
             for j in range(9):
                 iterator = str(board[i][j])
                 solved_string += iterator 
-        with open('./models/training_data.txt', 'a+') as f:
+        with open('./models/y_train.txt', 'a+') as f:
             f.write(solved_string)
-            print('wrote solved board to training_data.txt')
+            f.write('\n')
+            print('wrote solved board to y_train.txt')
         self.list_solved_strs.append(solved_string)
+        print('appended solved board to solutions list')'''
     '''
     method to format the raw data into a data structure that the SML and 
     SMLT can proprocess
     '''
     def process_raw_data(self):
-        for unsolved, solved in self.list_unsolved_strs, self.list_solved_strs:
+        for unsolved, solved in zip(self.list_unsolved_strs, self.list_solved_strs):
             t : tuple = (unsolved, solved)
             self.RAW_DATA.append(t)

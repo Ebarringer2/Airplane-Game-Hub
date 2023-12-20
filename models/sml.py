@@ -1,5 +1,4 @@
 import numpy as np 
-from models.sudoku.sudoku_class import Sudoku
 import tensorflow as tf 
 from tensorflow.python.keras.models import Sequential 
 from tensorflow.python.keras.layers import Dense, Flatten, Reshape 
@@ -21,10 +20,10 @@ def to_categorical(y, num_classes=None, dtype='float32'):
     return categorical
 
 class SML:
-    def __init__(self, sudoku : Sudoku):
+    def __init__(self, unsolved_board : list[list[int]]):
         self.model = self.build_model() 
-        self.sudoku = sudoku
-        self.initial_grid = sudoku.unsolved_board
+        print('compiled SML model')
+        self.initial_grid = unsolved_board
         self.raw_data : list[tuple[str]] = [
             ()
         ]

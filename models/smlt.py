@@ -1,7 +1,8 @@
 # training for the ml algorithm
 from models.sml import SML
-class SMLT():
-    def __init__(self, data_file : str, sml : SML):
+from models.sudoku.sudoku_class import Sudoku
+class SMLT(Sudoku):
+    def __init__(self, data_file : str, sml : SML, window):
         '''
         data file is the file containing the training data
         i.e. 'solutions.txt'
@@ -10,7 +11,8 @@ class SMLT():
         self.training = False
         self.data_file = data_file
         self.SML = sml
-        self.sudoku = self.SML.sudoku
+        self.window = window
+        self.sudoku = Sudoku(self.window)
         self.raw_data : list[tuple[str, str]] = []
     def run(self, epochs : int, g_iterations : int):
         '''
@@ -26,7 +28,7 @@ class SMLT():
             self.sudoku.train_generate(iterations=g_iterations)
             print(f'Epoch {epoch}: formatting unsolved and solved grid to tuple')
             self.sudoku.process_raw_data()
-            self.raw_data = self.SML.sudoku.RAW_DATA
+            self.raw_data = self.sudoku.RAW_DATA
             print(f'Epoch {epoch}: updating raw data')
             self.SML.raw_data = self.raw_data
             print(f'Epoch {epoch} raw data: {self.SML.raw_data}')
