@@ -1,5 +1,6 @@
 import numpy as np 
 from models.sudoku.sudoku_class import Sudoku
+import tensorflow as tf 
 from tensorflow.python.keras.models import Sequential 
 from tensorflow.python.keras.layers import Dense, Flatten, Reshape 
 from tensorflow.python.keras.optimizers import adam_v2

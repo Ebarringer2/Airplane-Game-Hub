@@ -445,9 +445,58 @@ class Sudoku:
                         print('solution found')
                         self.grid = self.SUDOKUSOLVER.extract_solution(self.DANCINGLINKS.solution)
     '''
-    method specifically for training the machine 
-    learning aglorithm
+    methods oriented around properly generating
+    basically just refactored generation and solving
+    that maximizes processing efficiency by neglecting
+    all pygame updated
+
+    this is just for training, when one wants to access the
+    actual game, one should use the typical generation and solving 
+    methods for one's game 
     '''
-    def train(self):
-        self.generate_sudoku()
-        self.save_solution()
+    def train_generate(self, iterations : int):
+        print('generating train data')
+        for i in range(1, iterations):
+            unsolved_string = ''
+            board = [[0 for _ in range(9)] for _ in range(9)]
+            for i in range(9):
+                for j in range(9):
+                    board[i][j] = self.grid[i][j]
+            for i in range(9):
+                for j in range(9):
+                    self.train_solve(i, j, board)
+            for _ in range(randint(10, 20)):
+                row, col = randint(0, 8), randint(0, 8)
+                board[row][col] = 0
+            for i in range(9):
+                for j in range(9):
+                    iterator = str(board[i][j])
+                    unsolved_string += iterator
+            with open('./models/training_data.txt', 'a+') as f:
+                f.write(unsolved_string)
+                print('wrote generated board to training_data.txt')
+    def train_solve(self, i : int, j : int, board : list[list[int]]) -> bool:
+        solved_string = ''
+        while board[i][j] != 0:
+            if i < 8:
+                i += 1
+            elif i == 8 and j < 8:
+                i = 0
+                j += 1
+            elif i == 8 and j == 8:
+                return True 
+        for it in range(1, 10):
+            if self.is_valid(i, j, it):
+                board[i][j] = it
+                if self.train_solve(i, j):
+                    return True 
+                else:
+                    board[i][j] = 0
+        for i in range(9):
+            for j in range(9):
+                iterator = str(board[i][j])
+                solved_string += iterator 
+        with open('./models/training_data.txt', 'a+') as f:
+            f.write(solved_string)
+            print('wrote solved board to training_data.txt')
+        

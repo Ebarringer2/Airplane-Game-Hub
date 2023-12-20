@@ -11,17 +11,19 @@ class SMLT():
         self.training = False
         self.data_file = data_file
         self.SML = sml
+        self.sudoku = self.SML.sudoku
         self.raw_data : list[tuple[str]] = []
     def run(self, epochs : int):
         self.running = True 
-        print("Running: " + self.running)
-        for epoch in epochs:
+        print("Running: " + str(self.running))
+        for epoch in range(1, epochs):
             print(f'Epoch {epoch}: generating raw data: sudoku grid')
             self.SML.sudoku.generate_sudoku()
             print(f'Epoch {epoch}: fetching data from text file')
             self.fetch()
             print(f'Epoch {epoch}: updating raw data')
             self.SML.raw_data = self.raw_data
+            print(f'Epoch {epoch} raw data: {self.SML.raw_data}')
             print(f'Epoch {epoch}: Preprocessing data')
             train_data = self.SML.preprocess_data()
             print(f'Epoch {epoch}: training')
@@ -45,3 +47,6 @@ class SMLT():
             pair += (unsolved, solution)
             raw_data.append(pair)
         self.raw_data = raw_data
+    def generate_loop(self, iterations : int):
+        for i in range(1, iterations):
+            self.SML.sudoku.generate_sudoku()

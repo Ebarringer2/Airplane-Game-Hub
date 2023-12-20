@@ -179,7 +179,7 @@ class Button:
         print(f"{self} was clicked")
     
     def __str__(self):
-        return f"<Button Obj {self.settings["id"]}>"
+        return f"<Button Obj {self.settings['id']}>"
 
     def draw(self):
         if self.settings["counter"] >= 1 and self.start_drop:
