@@ -139,6 +139,9 @@ class Sudoku:
         for i in range(9):
             for j in range(9):
                 self.solve(i, j)
+                # dont make this update to avoid having one solution that is always inputted
+                # on iterated generatiob
+                 #self.solved_board = self.grid
         # remove some digits to create the puzzle
         for _ in range(randint(10, 20)):
             print("Removing digits, adding zeroes")
@@ -462,16 +465,16 @@ class Sudoku:
         for i in range(1, iterations):
             unsolved_string = ''
             solved_string = ''
+            # empty 9x9 grid
             board = [[0 for _ in range(9)] for _ in range(9)]
+            # copy initial state of the grid
             for i in range(9):
                 for j in range(9):
                     board[i][j] = self.grid[i][j]
+            # fill the grid using the solve method
             for i in range(9):
                 for j in range(9):
-                    solved_board = self.train_solve(i, j, board)
-            for i in range(9):
-                for j in range(9):
-                    board[i][j] = solved_board[i][j]
+                    solved_board = self.solve(i, j)
             for n in range(9):
                 for k in range(9):
                     it = str(board[n][k])
@@ -528,3 +531,19 @@ class Sudoku:
         for unsolved, solved in zip(self.list_unsolved_strs, self.list_solved_strs):
             t : tuple = (unsolved, solved)
             self.RAW_DATA.append(t)
+    # another method for generating X train data
+    def generate_raw_data(self, iterations : int):
+        for _ in range(iterations):
+            self.generate_sudoku()
+            self.save_to_file('./models/X_train.txt', self.unsolved_board)
+            if self.solved:
+                self.save_to_file('./models/y_train.txt', self.grid)
+    # method for writing to file
+    def save_to_file(self, path : str, board : list[list[int]]):
+        board_string = ''
+        for i in range(9):
+            for j in range(9):
+                it = board[i][j]
+                board_string += str(it)
+        with open(path, 'a+') as f:
+            f.write(board_string + '\n')

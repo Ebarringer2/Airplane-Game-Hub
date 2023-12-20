@@ -16,4 +16,4 @@ sml = SML(s.unsolved_board)
 # instantiate the SMLT with the training data file path and the sml object
 smlt = SMLT(data_file='./solutions.txt', sml=sml, window=w)
 # start the training loop
-smlt.run(epochs=32, g_iterations=10000)
+smlt.run(epochs=32, g_iterations=100)
